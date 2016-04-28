@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include <kernel.h>
+#include <sce/kernel.h>
 
 #include <ps4/memory/protected.h>
 
