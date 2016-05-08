@@ -37,8 +37,10 @@ $(foreach i,$(wildcard $(1)source/*.s),$(call generateSObject,$(i)))
 
 $(OutPath)/libPs4_extension_$(subst /,_,$(patsubst %/,%,$(1))).a: $(patsubst %,$(BuildPath)/%, $(patsubst %.c,%.o,$(wildcard $(1)source/*.c)) $(patsubst %.s,%.o,$(wildcard $(1)source/*.s)))
 	$$(dirp)
-	$$(archive) $$@ $$?
+	$$(archive)
 all:: $(OutPath)/libPs4_extension_$(subst /,_,$(patsubst %/,%,$(1))).a
+clean::
+	rm -fR $(BuildPath)/$(strip $(1)) $(OutPath)/libPs4_extension_$(subst /,_,$(patsubst %/,%,$(1))).a
 
 endef
 

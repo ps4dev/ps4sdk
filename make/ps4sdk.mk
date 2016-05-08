@@ -16,6 +16,9 @@ LibPath ?= -L. -Llib
 BuildPath ?= build
 OutPath ?= bin
 
+AllTarget ?= $(OutPath)/$(TargetFile)
+CleanTarget ?= rm -fR $(BuildPath) $(OutPath)
+
 ###################################
 
 # FIXME: Generate .... consolidate(TargetFile) -> ifdef ....
@@ -158,8 +161,6 @@ $(BuildPath)/%.c.o: $(SourcePath)/%.c
 ###################################
 
 all::
-
 clean::
-	rm -fR $(BuildPath) $(OutPath)
 
 ###################################

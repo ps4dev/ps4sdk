@@ -18,6 +18,6 @@ include $(MakePath)/trait/syscall_rop_0x93a4FFFF8.mk
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile)
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################

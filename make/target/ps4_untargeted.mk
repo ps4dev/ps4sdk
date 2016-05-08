@@ -7,6 +7,6 @@ include $(MakePath)/trait/link.mk
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile)
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################

@@ -12,6 +12,7 @@ include $(MakePath)/trait/base.mk
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile).a
+AllTarget := $(OutPath)/$(TargetFile).a
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################

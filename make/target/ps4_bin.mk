@@ -2,6 +2,7 @@
 
 include $(MakePath)/trait/freestanding.mk
 include $(MakePath)/trait/ps4.mk
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################
 
@@ -43,6 +44,6 @@ endif
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile)
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################

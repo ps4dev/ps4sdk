@@ -7,7 +7,7 @@
 // extension signature, base for kernel execution
 int ps4KernelExecute(void *call, void *uap, int64_t *ret0, int64_t *ret1);
 // Omnislash - 9999, 9999, .... - Mimic - ...
-int64_t ps4KernelCall(void *call, ...);//void *call, int64_t rdi, int64_t rsi, int64_t rdx, int64_t rcx, int64_t r8, int64_t r9);
+int64_t ps4KernelCall(void *call, ...);
 int64_t ps4KernelCallBase(void *call, int64_t rdi, int64_t rsi, int64_t rdx, int64_t rcx, int64_t r8, int64_t r9);
 
 // info & util

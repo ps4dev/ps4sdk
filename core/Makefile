@@ -21,12 +21,10 @@ endif
 
 include $(Ps4Sdk)/make/ps4sdk.mk
 
-#dirp = @mkdir -p $(@D)
-archive := $(Archiver) $(ArchiverFlags)
+archive = $(Archiver) $(ArchiverFlags)
 
-$(BuildPath)/%.o: $(SourcePath)/%.s
-	$(dirp)
-	$(assemble)
+#dirp = @mkdir -p $(@D)
+#archive := $(Archiver) $(ArchiverFlags)
 
 #generateObject <type> <lib> <module> <symbol>
 define generateObject
@@ -35,7 +33,7 @@ ifeq ("$(wildcard $$@)", "")
 	@mkdir -p $$@
 	@rmdir $$@
 endif
-	$$(compile) -DPS4_STUB_MODULE="$(strip $(3))" -DPS4_STUB_SYMBOL="$(strip $(4))"
+	@$$(compile) -DPS4_STUB_MODULE="$(strip $(3))" -DPS4_STUB_SYMBOL="$(strip $(4))"
 
 endef
 
@@ -44,8 +42,10 @@ define generateLibrary
 $(foreach i, $(4), $(call generateObject, $(1), $(2), $(3), $(i)))
 $(OutPath)/$(strip $(2))_stub.a: $(5) $(patsubst %,$(BuildPath)/$(strip $(2))/%.stub.o,$(strip $(4)))
 	$$(dirp)
-	$$(archive) $$@ $$?
+	$$(archive) $$@ $(BuildPath)/$(strip $(2))/*
 all:: $(OutPath)/$(strip $(2))_stub.a
+clean::
+	rm -fR $(BuildPath)/$(strip $(2)) $(OutPath)/$(strip $(2))_stub.a
 
 endef
 

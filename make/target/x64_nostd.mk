@@ -12,6 +12,6 @@ CrtFile ?= $(Ps4Sdk)/crt0.s
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile)
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################

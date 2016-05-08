@@ -6,6 +6,6 @@ include $(MakePath)/trait/pic.mk
 
 ###################################
 
-all:: $(OutPath)/$(TargetFile).a
+include $(MakePath)/trait/all_and_clean.mk
 
 ###################################
