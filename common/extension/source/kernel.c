@@ -65,7 +65,7 @@ uint64_t ps4KernelRegisterCr0Get(void)
 	return (uint64_t)ps4KernelCall((void *)ps4KernRegisterCr0Get);
 }
 
-int ps4KernelAssemblerInstructionNext(void *base, size_t *next)
+int ps4KernelMachineInstructionNext(void *base, size_t *next)
 {
 	// currently this puppy does not run in kernel :(
 	//return (int)ps4KernelCall(ps4MachineInstructionNext, base, next);
@@ -80,7 +80,7 @@ int ps4KernelAssemblerInstructionNext(void *base, size_t *next)
 	//return ps4MachineInstructionSeek(base, next);
 }
 
-int ps4KernelAssemblerInstructionSeek(void *base, size_t *offset)
+int ps4KernelMachineInstructionSeek(void *base, size_t *offset)
 {
 	// currently this puppy does not run in kernel :(
 	//return (int)ps4KernelCall(ps4MachineInstructionSeek, base, offset);
