@@ -1,4 +1,5 @@
 #include <sys/sysent.h>
+#include <ps4/error.h>
 
 // Self-contained
 static int ps4KernelExecuteEarlyIsInKernel()
@@ -19,5 +20,5 @@ int ps4KernelExecute(sy_call_t *fn, void *uap)
 {
 	if(ps4KernelExecuteEarlyIsInKernel())
 		return fn(ps4KernelExecuteEarlyCurrentThread(), uap);
-	return -1;
+	return PS4_ERROR_NOT_IMPLEMENTED;
 }

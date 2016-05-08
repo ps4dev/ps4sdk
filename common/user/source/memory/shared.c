@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 
 #include <ps4/memory/shared.h>
+#include <ps4/error.h>
 
 typedef struct Ps4MemoryShared
 {
@@ -30,11 +31,11 @@ int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
 	size_t l = strnlen(path, 255);
 
 	if(memory == NULL)
-		return -1;
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
 
 	m = (Ps4MemoryShared *)malloc(sizeof(Ps4MemoryShared));
 	if(m == NULL)
-		return -2;
+		return PS4_OUT_OF_MEMORY;
 
 	m->path = malloc((l + 1)* sizeof(char));
 	if(m->path == NULL)
@@ -70,7 +71,7 @@ int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
 	close(handle);
 
 	*memory = m;
-	return 0;
+	return PS4_OK;
 
 	e3:
 		close(handle);
@@ -80,7 +81,7 @@ int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
 	e1:
 		free(m);
 
-	return -3;
+	return PS4_OUT_OF_MEMORY;
 }
 
 int ps4MemorySharedClose(Ps4MemoryShared *m)

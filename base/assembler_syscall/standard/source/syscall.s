@@ -8,5 +8,9 @@
 .type ps4AssemblerSyscall, @function
 ps4AssemblerSyscall:
 	syscall
+	jnc .Lps4AssemblerSyscallR
+	movq $-1, %rax
+	.Lps4AssemblerSyscallR:
+		ret
 .size ps4AssemblerSyscall, .-ps4AssemblerSyscall
 .popsection

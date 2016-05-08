@@ -13,7 +13,7 @@ endif
 target ?= ps4_lib_no_all
 BuildPath := $(Ps4Sdk)/build
 OutPath := $(Ps4Sdk)/lib
-IncludePath := -I$(wildcard */*/include)
+IncludePath := -I$(wildcard */*/include) #FIXME: Need to gen correctly
 
 include $(Ps4Sdk)/make/ps4sdk.mk
 

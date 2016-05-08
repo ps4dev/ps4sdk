@@ -2,6 +2,7 @@
 
 #include <ps4/kern.h>
 
+//FIXME: Provide atomic
 void ps4KernRegisterCr0Set(register_t cr0)
 {
 	__asm__ volatile("movq %0, %%cr0" : : "r" (cr0));
@@ -21,6 +22,7 @@ struct thread *ps4KernThreadCurrent(void)
 	return td;
 }
 
+// FIXME: To C once td tested / safe
 register_t ps4KernThreadGetReturn0(struct thread *td)
 {
 	//struct thread *td = ps4KernThreadCurrent();

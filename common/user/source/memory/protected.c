@@ -7,6 +7,7 @@
 #include <kernel.h>
 
 #include <ps4/memory/protected.h>
+#include <ps4/error.h>
 
 typedef struct Ps4MemoryProtected
 {
@@ -23,14 +24,14 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 	long pageSize = sysconf(_SC_PAGESIZE);
 
 	if(memory == NULL)
- 		return -1;
+ 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
 
 	if(size == 0)
-		return -2;
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
 
 	m = (Ps4MemoryProtected *)malloc(sizeof(Ps4MemoryProtected));
 	if(m == NULL)
-		return -3;
+		return PS4_OUT_OF_MEMORY;
 
 	m->size = (size / pageSize + 1) * pageSize; // align to pageSize
 
@@ -52,7 +53,7 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 	close(writableHandle);
 
 	*memory = m;
-	return 0;
+	return PS4_OK;
 
 	e4:
 		munmap(m->executable, m->size);
@@ -63,7 +64,7 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 	e1:
 		free(m);
 
-	return -4; // make error codes proper errnos ... everywhere ... meh
+	return PS4_OUT_OF_MEMORY; // make error codes proper errnos ... everywhere ... meh
 }
 
 int ps4MemoryProtectedDestroy(Ps4MemoryProtected *memory)

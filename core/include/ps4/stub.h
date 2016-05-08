@@ -33,8 +33,8 @@
 #ifndef Ps4StubSyscallSymbol
 	#define Ps4StubSyscallSymbol(name) name
 #endif
-#ifndef Ps4StubSyscallNumberSymbol
-	#define Ps4StubSyscallNumberSymbol(name) SYS_##name
+#ifndef Ps4StubSyscallNumber
+	#define Ps4StubSyscallNumber(name) SYS_##name
 #endif
 
 #ifndef Ps4StubData
@@ -115,7 +115,7 @@
 				jz .L"#function"R \n \
 					jmp *%r11 \n \
 				.L"#function"R: \n \
-					call ps4AssemblerRegisterPushAllArguments \n \
+					call Ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#moduleName", %rsi \n \
 					movabs $"#functionName", %rdx \n \
@@ -124,7 +124,7 @@
 					xor %rax, %rax \n \
 					call ps4StubResolve \n \
 					mov %rax, %r11 \n \
-					call ps4AssemblerRegisterPopAllArguments \n \
+					call Ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -154,14 +154,14 @@
 				jz .L"#function"R \n \
 					jmp *%r11 \n \
 				.L"#function"R: \n \
-					call ps4AssemblerRegisterPushAllArguments \n \
+					call Ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#functionName", %rsi \n \
 					movabs $"#functionAddress", %rdx \n \
 					xor %rax, %rax \n \
 					call ps4KernStubResolve \n \
 					mov %rax, %r11 \n \
-					call ps4AssemblerRegisterPopAllArguments \n \
+					call Ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -201,7 +201,7 @@
 					jz .L"#function"R \n \
 						jmp *%r11 \n \
 				.L"#function"R: \n \
-					call ps4AssemblerRegisterPushAllArguments \n \
+					call Ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#moduleName", %rsi \n \
 					movabs $"#functionName", %rdx \n \
@@ -211,7 +211,7 @@
 					xor %rax, %rax \n \
 					call ps4MixedStubResolve \n \
 					mov %rax, %r11 \n \
-					call ps4AssemblerRegisterPopAllArguments \n \
+					call Ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -247,14 +247,14 @@
 					jz .L"#function"R \n \
 						jmp *%r11 \n \
 				.L"#function"R: \n \
-					call ps4AssemblerRegisterPushAllArguments \n \
+					call Ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#functionName", %rsi \n \
 					movabs $"#functionAddress", %rdx \n \
 					xor %rax, %rax \n \
 					call ps4KernStubResolve \n \
 					mov %rax, %r11 \n \
-					call ps4AssemblerRegisterPopAllArguments \n \
+					call Ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -296,7 +296,7 @@
 		Ps4StubSyscall_(name)
 
 	#define Ps4StubSyscall_(name) \
-		Ps4StubSyscallStub(Ps4StubSyscallSymbol(name), Ps4StubSyscallNumberSymbol(name))
+		Ps4StubSyscallStub(Ps4StubSyscallSymbol(name), Ps4StubSyscallNumber(name))
 #endif
 
 #ifndef Ps4StubFunction
@@ -337,5 +337,5 @@
 	#define Ps4StubMixedSyscall_(name) \
 		Ps4StubFunctionNameData(Ps4StubFunctionNameSymbol(name), Ps4StubFunctionSymbol(name)) \
 		Ps4StubKernFunctionAddressData(Ps4StubKernFunctionAddressSymbol(name)) \
-		Ps4StubMixedSyscallStub(Ps4StubFunctionSymbol(name), Ps4StubFunctionNameSymbol(name), Ps4StubKernFunctionAddressSymbol(name), Ps4StubSyscallNumberSymbol(name))
+		Ps4StubMixedSyscallStub(Ps4StubFunctionSymbol(name), Ps4StubFunctionNameSymbol(name), Ps4StubKernFunctionAddressSymbol(name), Ps4StubSyscallNumber(name))
 #endif

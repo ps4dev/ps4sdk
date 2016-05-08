@@ -24,10 +24,10 @@ int ps4KernUartEnable()
 	uint16_t *sf;
 	fn = (uint8_t *)ps4KernDlSym("bootparam_disable_console_output");
 	if(fn == NULL)
-		return -1;
+		return PS4_KERN_ERROR_DLSYM_NOT_FOUND;
 	sf = (uint16_t *)(0xffffffff00000000 | (uintptr_t)*(uint32_t *)(fn + 4));
 	*sf = *sf & ~(1 << 15);
-	return 0;
+	return PS4_OK;
 }
 
 int ps4KernUartDisable()
@@ -36,8 +36,8 @@ int ps4KernUartDisable()
 	uint16_t *sf;
 	fn = (uint8_t *)ps4KernDlSym("bootparam_disable_console_output");
 	if(fn == NULL)
-		return -1;
+		return PS4_KERN_ERROR_DLSYM_NOT_FOUND;
 	sf = (uint16_t *)(0xffffffff00000000 | (uintptr_t)*(uint32_t *)(fn + 4));
 	*sf = *sf | (1 << 15);
-	return 0;
+	return PS4_OK;
 }

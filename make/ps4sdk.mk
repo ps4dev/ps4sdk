@@ -20,6 +20,15 @@ OutPath ?= bin
 
 # FIXME: Generate .... consolidate(TargetFile) -> ifdef ....
 
+ifndef Target
+ifdef target
+Target := $(target)
+endif
+ifdef TARGET
+Target := $(TARGET)
+endif
+endif
+
 ifndef Debug
 ifdef debug
 Debug := $(debug)
@@ -134,7 +143,7 @@ archive = $(Archiver) $(ArchiverFlags) $@ $?
 
 ###################################
 
-include $(MakePath)/target/$(strip $(target)).mk
+include $(MakePath)/target/$(strip $(Target)).mk
 
 ###################################
 

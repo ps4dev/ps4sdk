@@ -37,24 +37,24 @@ int ps4KernPrivilegeUnjail()
 
 	t = ps4KernDlSym("prison0");
 	if(t == NULL)
-		return -1;
+		return PS4_KERN_ERROR_DLSYM_NOT_FOUND;
 	cr = td->td_proc->p_ucred;
 	cr->cr_prison = (struct prison *)t;
 
-	fd = td->td_proc->p_fd;
 	t = ps4KernDlSym("rootvnode");
 	if(t == NULL)
-		return -2;
+		return PS4_KERN_ERROR_DLSYM_NOT_FOUND;
+	fd = td->td_proc->p_fd;
 	//fd->fd_cdir =
 	fd->fd_rdir = fd->fd_jdir = *(struct vnode **)t;
 
-	return 0;
+	return PS4_OK;
 }
 
 int ps4KernPrivilegeEscalate()
 {
 	ps4KernPrivilegeRoot();
-	if(ps4KernPrivilegeUnjail() != 0)
-		return -1;
-	return 0;
+	if(ps4KernPrivilegeUnjail() != PS4_OK)
+		return PS4_ERROR_INTERNAL_ERROR;
+	return PS4_OK;
 }

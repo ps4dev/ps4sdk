@@ -9,12 +9,12 @@ ps4AssemblerSyscall:
 	movq (%r11), %r11
 	movq %rcx, %r10
 	call *%r11
-	jnc .Lps4SyscallR
+	jnc .Lps4AssemblerSyscallR
 	# The error and return value is rax + carry (freebsd, systemv abi)
 	# Be aware that this non-libc-syscall does not set libc's errno
 	# as we may not even use libc at this point, or at all
 	movq $-1, %rax
-	.Lps4SyscallR:
+	.Lps4AssemblerSyscallR:
 		ret
 .size ps4AssemblerSyscall, .-ps4AssemblerSyscall
 .popsection
