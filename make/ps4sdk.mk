@@ -16,9 +16,6 @@ LibPath ?= -L. -Llib
 BuildPath ?= build
 OutPath ?= bin
 
-AllTarget ?= $(OutPath)/$(TargetFile)
-CleanTarget ?= rm -fR $(BuildPath) $(OutPath)
-
 ###################################
 
 # FIXME: Generate .... consolidate(TargetFile) -> ifdef ....
@@ -106,6 +103,7 @@ ArchiverFlags = rcs
 findwildcard_ = $(wildcard $1$2) $(strip $(foreach d,$(wildcard $1*),$(call findwildcard_,$d/,$2)))
 findwildcard = $(call findwildcard_,$(strip $(1))/,$(strip $(2)))
 dirp = @mkdir -p $(@D)
+uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
 
 ###################################
 
@@ -127,21 +125,20 @@ ObjectFiles	+=	$(patsubst $(SourcePath)/%.c, $(BuildPath)/%.c.o, $(SourceFilesC)
 				$(patsubst $(SourcePath)/%.s, $(BuildPath)/%.s.o, $(SourceFilesS))
 
 TargetFile ?= $(basename $(notdir $(CURDIR)))
+AllTarget ?= $(OutPath)/$(TargetFile)
+CleanTarget ?= rm -fR $(BuildPath) $(OutPath)
 
 ###################################
 
 assemble = $(Assembler) $(Sf) -c $< $(AssemblerFlags) -o $@
 compile = $(Compiler) $(Cf) -c $< $(CompilerFlags) -o $@
-#link = $(Linker) $(Lf) $(CrtFile) $(ObjectFiles) $(LinkerFlags) $(Libraries) -o $@
-#compileAndLink = $(Cf) $(Lf) $(Compiler) $? $(CompilerFlags) $(LinkerFlags) $(Libraries) -o $@
-#archive = $(Archiver) $(ArchiverFlags) $@ $(ObjectFiles)
-link = $(Linker) $(Lf) $(CrtFile) $? $(LinkerFlags) $(Libraries) -o $@
+link = $(Linker) $(Lf) $(CrtFile) $(call uniq,$? $(ObjectFiles)) $(LinkerFlags) $(Libraries) -o $@
 compileAndLink = $(Cf) $(Lf) $(Compiler) $? $(CompilerFlags) $(LinkerFlags) $(Libraries) -o $@
-archive = $(Archiver) $(ArchiverFlags) $@ $?
+archive = $(Archiver) $(ArchiverFlags) $@ $(call uniq,$? $(ObjectFiles))
 
 ###################################
 
-.PHONY:: all clean
+.PHONY:: all clean foo
 .DEFAULT_GOAL := all
 
 ###################################

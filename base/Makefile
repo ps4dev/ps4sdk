@@ -39,7 +39,8 @@ $(OutPath)/libPs4_base_$(subst /,_,$(patsubst %/,%,$(1))).a: $(patsubst %,$(Buil
 	$$(archive)
 all:: $(OutPath)/libPs4_base_$(subst /,_,$(patsubst %/,%,$(1))).a
 clean::
-	rm -rf $(BuildPath)/$(subst /,,$(strip $(1))) $(OutPath)/libPs4_base_$(subst /,_,$(patsubst %/,%,$(1))).a
+	rm -fR $(BuildPath) $(OutPath)/libPs4_base_$(subst /,_,$(patsubst %/,%,$(1))).a
+	-rmdir -p $(BuildPath)/$(strip $(1))
 
 endef
 
