@@ -23,7 +23,7 @@ $(eval $(call generateModule, libSceSysmodule, sceSysmoduleIsLoaded sceSysmodule
 $(eval $(call generateModule, libSceUsbd, sceUsbdBulkTransfer sceUsbdCheckConnected sceUsbdClearHalt sceUsbdClose sceUsbdControlTransfer sceUsbdExit sceUsbdFreeConfigDescriptor sceUsbdFreeDeviceList sceUsbdGetActiveConfigDescriptor sceUsbdGetConfigDescriptor sceUsbdGetConfigDescriptorByValue sceUsbdGetDeviceDescriptor sceUsbdGetDeviceList sceUsbdInit sceUsbdInterruptTransfer sceUsbdOpen sceUsbdOpenDeviceWithVidPid sceUsbdResetDevice sceUsbdSetInterfaceAltSetting))
 
 # no need to touch, generates non-module libs
-$(eval $(call generateLibrary, kern_function, libPs4Kern, none, $(kerns)))
+$(eval $(call generateLibraryLarge, kern_function, libPs4Kern, none, $(kerns)))
 $(eval $(call generateLibrary, syscall, libPs4Syscall, none, $(syscalls)))
 
 # mixed libs

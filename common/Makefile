@@ -40,7 +40,7 @@ $(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a: $(patsubst %,$(Bu
 	$$(archive)
 all:: $(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a
 clean::
-	rm -fR $(BuildPath)/$(strip $(1)) $(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a
+	rm -fR $(BuildPath)/$(subst /,,$(strip $(1))) $(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a
 
 endef
 

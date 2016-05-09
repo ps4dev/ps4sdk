@@ -21,7 +21,7 @@ endif
 
 include $(Ps4Sdk)/make/ps4sdk.mk
 
-archive = $(Archiver) $(ArchiverFlags)
+archive2 = $(Archiver) $(ArchiverFlags)
 
 #dirp = @mkdir -p $(@D)
 #archive := $(Archiver) $(ArchiverFlags)
@@ -42,7 +42,21 @@ define generateLibrary
 $(foreach i, $(4), $(call generateObject, $(1), $(2), $(3), $(i)))
 $(OutPath)/$(strip $(2))_stub.a: $(5) $(patsubst %,$(BuildPath)/$(strip $(2))/%.stub.o,$(strip $(4)))
 	$$(dirp)
-	$$(archive) $$@ $(BuildPath)/$(strip $(2))/*
+	$$(archive)
+all:: $(OutPath)/$(strip $(2))_stub.a
+clean::
+	rm -fR $(BuildPath)/$(strip $(2)) $(OutPath)/$(strip $(2))_stub.a
+
+endef
+
+#generateLibrary <type> <lib> <module> <symbols> <extobj>
+define generateLibraryLarge
+$(foreach i, $(4), $(call generateObject, $(1), $(2), $(3), $(i)))
+$(OutPath)/$(strip $(2))_stub.a: $(5) $(patsubst %,$(BuildPath)/$(strip $(2))/%.stub.o,$(strip $(4)))
+	$$(dirp)
+	find $$(BuildPath)/$$(strip $(2)) -name *.o > /tmp/ps4sdk_$$(strip $(2))_object.tmp
+	xargs $$(archive2) $$(OutPath)/$$(strip $(2))_stub.a < /tmp/ps4sdk_$$(strip $(2))_object.tmp
+	rm -rf /tmp/ps4sdk_$$(strip $(2))_object.tmp
 all:: $(OutPath)/$(strip $(2))_stub.a
 clean::
 	rm -fR $(BuildPath)/$(strip $(2)) $(OutPath)/$(strip $(2))_stub.a
