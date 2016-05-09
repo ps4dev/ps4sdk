@@ -6,11 +6,22 @@ include $(MakePath)/trait/all_and_clean.mk
 
 ###################################
 
+include $(MakePath)/trait/common_extension.mk
+include $(MakePath)/trait/kernel_execute.mk
+include $(MakePath)/trait/common.mk
+include $(MakePath)/trait/mixed.mk
+include $(MakePath)/trait/sce.mk
+include $(MakePath)/trait/kern.mk
+include $(MakePath)/trait/base.mk
+include $(MakePath)/trait/syscall_rop_0x93a4FFFF8.mk
+
+###################################
+
 ifndef KeepElf
-ifdef ps4sdk
+ifdef keepelf
 KeepElf := $(keepelf)
 endif
-ifdef PS4SDK
+ifdef KEEPELF
 KeepElf := $(KEEPELF)
 endif
 endif
