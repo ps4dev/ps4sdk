@@ -16,6 +16,9 @@ void *ps4KernelDlSym(char *name);
 int ps4KernelIsInKernel();
 int ps4KernelIsKernelAddress(void *addr);
 
+void ps4KernelRegisterCr0Set(uint64_t cr0); //FIXME: provide an atomic wp on/off switch...
+uint64_t ps4KernelRegisterCr0Get(void);
+
 // sec stuff
 int ps4KernelUartEnable();
 int ps4KernelUartDisable();

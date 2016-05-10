@@ -73,7 +73,7 @@ void ps4UtilStandardIoRedirectPlain(int to)
 	for(i = 0; i < 3; ++i)
 	{
 		close(i);
-		if(to >= 0)
+		if(to > 2)
 			dup(to);
 		else
 			open("/dev/null", O_RDWR, 0);

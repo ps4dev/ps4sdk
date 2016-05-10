@@ -65,36 +65,6 @@ uint64_t ps4KernelRegisterCr0Get(void)
 	return (uint64_t)ps4KernelCall((void *)ps4KernRegisterCr0Get);
 }
 
-int ps4KernelMachineInstructionNext(void *base, size_t *next)
-{
-	// currently this puppy does not run in kernel :(
-	//return (int)ps4KernelCall(ps4MachineInstructionNext, base, next);
- 	if(ps4KernelIsInKernel())
-		return PS4_ERROR_NOT_IMPLEMENTED;
-
-	void *m = malloc(128);
-	ps4KernelMemoryCopy(base, m, 128);
-	int r = ps4MachineInstructionSeek(m, next);
-	free(m);
-	return r;
-	//return ps4MachineInstructionSeek(base, next);
-}
-
-int ps4KernelMachineInstructionSeek(void *base, size_t *offset)
-{
-	// currently this puppy does not run in kernel :(
-	//return (int)ps4KernelCall(ps4MachineInstructionSeek, base, offset);
- 	if(ps4KernelIsInKernel())
-		return PS4_ERROR_NOT_IMPLEMENTED;
-
-	void *m = malloc(128);
-	ps4KernelMemoryCopy(base, m, 128);
-	int r = ps4MachineInstructionSeek(m, offset);
-	free(m);
-	return r;
-	//return ps4MachineInstructionSeek(base, offset);
-}
-
 void *ps4KernelDlSym(char *symbol)
 {
 	return (void *)ps4KernelCall((void *)ps4KernDlSym, symbol);
