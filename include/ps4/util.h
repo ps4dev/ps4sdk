@@ -8,7 +8,8 @@ void ps4UtilStandardIoRedirectReset(int stdfd[3], fpos_t stdpos[3]);
 
 void ps4UtilStandardIoRedirectPlain(int to);
 
-int ps4UtilServerCreate(int port, int backlog, int try, unsigned int sec);
+int ps4UtilServerCreateEx(int port, int backlog, int try, unsigned int sec);
+#define ps4UtilServerCreate(port) ps4UtilServerCreateEx(port, 10, 1, 0)
 int ps4UtilServerCreateSingleAccept(int port);
 
 FILE *ps4UtilFileOpenDescriptorDuplicate(int fd, const char *mode); //fddupopen

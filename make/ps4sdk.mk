@@ -13,6 +13,7 @@ MakePath := $(dir $(lastword $(MAKEFILE_LIST)))
 SourcePath ?= source
 IncludePath ?= -I. -Iinclude
 LibPath ?= -L. -Llib
+LibraryPath ?= $(LibPath)
 BuildPath ?= build
 OutPath ?= bin
 
@@ -95,7 +96,7 @@ Lf ?=
 
 AssemblerFlags = -m64
 CompilerFlags = -std=c11 -O3 -Wall -pedantic -m64 -mcmodel=large $(IncludePath) $(Debug)
-LinkerFlags = -O3 -Wall -m64 $(LibPath) $(Debug)
+LinkerFlags = -O3 -Wall -m64 $(LibraryPath) $(Debug)
 ArchiverFlags = rcs
 
 ###################################

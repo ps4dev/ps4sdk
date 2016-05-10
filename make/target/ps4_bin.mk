@@ -2,13 +2,12 @@
 
 include $(MakePath)/trait/freestanding.mk
 include $(MakePath)/trait/ps4.mk
-include $(MakePath)/trait/all_and_clean.mk
 
 ###################################
 
 include $(MakePath)/trait/common_extension.mk
 include $(MakePath)/trait/kernel_execute.mk
-include $(MakePath)/trait/common.mk
+include $(MakePath)/trait/common_no_isolate.mk
 include $(MakePath)/trait/mixed.mk
 include $(MakePath)/trait/sce.mk
 include $(MakePath)/trait/kern.mk

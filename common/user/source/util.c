@@ -80,7 +80,7 @@ void ps4UtilStandardIoRedirectPlain(int to)
 	}
 }
 
-int ps4UtilServerCreate(int port, int backlog, int try, unsigned int sec)
+int ps4UtilServerCreateEx(int port, int backlog, int try, unsigned int sec)
 {
 	int server;
 	struct sockaddr_in serverAddress;
@@ -125,7 +125,7 @@ int ps4UtilServerCreate(int port, int backlog, int try, unsigned int sec)
 int ps4UtilServerCreateSingleAccept(int port)
 {
 	int server, client;
-	if((server = ps4UtilServerCreate(port, 1, 20, 1)) < 0)
+	if((server = ps4UtilServerCreateEx(port, 1, 20, 1)) < 0)
 		return server;
 	client = accept(server, NULL, NULL); // either return is fine
 	close(server);
