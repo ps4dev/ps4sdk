@@ -1,7 +1,11 @@
 #pragma once
 
-void ps4KernRegisterCr0Set(register_t cr0); // load_cr0
-register_t ps4KernRegisterCr0Get(void); // rcr0
+void ps4KernRegisterCr0Set(register_t cr0);
+register_t ps4KernRegisterCr0Get(void);
+void ps4KernRegisterMsrSet(register_t msr, register_t value);
+register_t ps4KernRegisterMsrGet(register_t msr);
+
+int ps4KernBrewCoffee();
 
 struct thread *ps4KernThreadCurrent(void);
 register_t ps4KernThreadGetReturn0(struct thread *td);

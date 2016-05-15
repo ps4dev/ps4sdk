@@ -1,18 +1,31 @@
 #define _KERNEL
 
 #include <ps4/kern.h>
+#include <machine/cpufunc.h>
 
-//FIXME: Provide atomic
 void ps4KernRegisterCr0Set(register_t cr0)
 {
-	__asm__ volatile("movq %0, %%cr0" : : "r" (cr0));
+	load_cr0(cr0);
 }
 
 register_t ps4KernRegisterCr0Get(void)
 {
-	register_t cr0;
-	__asm__ volatile("movq %%cr0, %0" : "=r" (cr0));
-	return cr0;
+	return rcr0();
+}
+
+void ps4KernRegisterMsrSet(register_t msr, register_t value)
+{
+	wrmsr(msr, value);
+}
+
+register_t ps4KernRegisterMsrGet(register_t msr)
+{
+	return rdmsr(msr);
+}
+
+int ps4KernBrewCoffee()
+{
+	return PS4_ERROR_I_AM_A_TEAPOT;
 }
 
 struct thread *ps4KernThreadCurrent(void)

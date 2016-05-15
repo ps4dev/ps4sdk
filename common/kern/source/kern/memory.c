@@ -23,52 +23,20 @@
 
 #include <ps4/kern.h>
 
-static uint8_t *ps4KernMemoryBaseAddress;
-static uint8_t *ps4KernMemoryCurrentAddress;
-
-//FIXME: Find way to malloc RWX memory ... not safe at all (>.<)
 int ps4KernMemoryAllocate(void **memory, size_t size)
 {
-	struct mtx *mutex;
 	if(memory == NULL)
 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
 
-	if(ps4KernMemoryCurrentAddress == NULL)
-	{
-		mutex = ps4KernDlSym("Giant");
-		void **base = (void **)ps4HackKernMemoryGetBaseAddress();
+	if(size == 0)
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
 
-		mtx_lock(mutex);
-		ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() & ~CR0_WP);
-		// make sure we do not override prior mallocs until reboot
-		// [CACHE][REGISTY][MTXNAME][MUTEX][MAGIC][FREEPOINTER][FREE ...]
-		if(base[4] != (void *)0x0bad0d060acce550)
-		{
-			struct malloc_type *mt = ps4KernDlSym("M_TEMP");
-			base[0] = NULL;
-			base[1] = NULL;
-			base[2] = malloc(8, mt, M_ZERO | M_WAITOK);
-			char *name = base[2];
-			name[0] = 'm'; name[1] = 'e'; name[2] = 'm'; name[3] = '\0';
-			base[3] = malloc(sizeof(struct mtx), mt, M_ZERO | M_WAITOK);
-			mtx_init(base[3], name, NULL, MTX_DEF | MTX_RECURSE | MTX_QUIET);// | MTX_NOWITNESS | MTX_DUPOK | MTX_NOPROFILE);
-			base[4] = (void *)0x0bad0d060acce550;
-			base[5] = &base[6];
-		}
-		ps4KernMemoryBaseAddress = (uint8_t *)base;
-		ps4KernMemoryCurrentAddress = base[5];
-		ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() | CR0_WP);
-		mtx_unlock(mutex);
-	}
+	if(size <= 0x4000) // pagesize
+		size = 0x4001; // force new
 
-	mutex = (struct mtx *)(((void **)ps4KernMemoryBaseAddress)[3]);
-	mtx_lock(mutex);
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() & ~CR0_WP);
-	*memory = ps4KernMemoryCurrentAddress;
-	ps4KernMemoryCurrentAddress += size;
-	((void **)ps4KernMemoryBaseAddress)[5] = ps4KernMemoryCurrentAddress;
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() | CR0_WP);
-	mtx_unlock(mutex);
+	ps4KernProtectionExecuteDisable();
+	*memory = malloc(size, ps4KernDlSym("M_TEMP"), M_ZERO | M_WAITOK);
+	ps4KernProtectionExecuteEnable();
 
 	return PS4_OK;
 }
@@ -76,14 +44,21 @@ int ps4KernMemoryAllocate(void **memory, size_t size)
 void *ps4KernMemoryMalloc(size_t size)
 {
 	void *m;
-	if(ps4KernMemoryAllocate(&m, size) != 0)
+
+	if(ps4KernMemoryAllocate(&m, size) != PS4_OK)
 		return NULL;
+
 	return m;
 }
 
-void ps4KernMemoryFree(void *memory)
+int ps4KernMemoryFree(void *memory)
 {
+	if(memory == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
 
+	free(memory, ps4KernDlSym("M_TEMP"));
+
+	return PS4_OK;
 }
 
 int ps4KernMemoryCopy(void *from, void *to, size_t size)
@@ -91,9 +66,9 @@ int ps4KernMemoryCopy(void *from, void *to, size_t size)
 	if(from == NULL || to == NULL)
 		return PS4_ERROR_ARGUMENT_MISSING;
 
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() & ~CR0_WP);
+	ps4KernProtectionWriteDisable();
 	memcpy(to, from, size);
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() | CR0_WP);
+	ps4KernProtectionWriteEnable();
 
 	return PS4_OK;
 }
@@ -105,14 +80,26 @@ int ps4KernMemorySwap(void *a, void *b, size_t size)
 	if(a == NULL || b == NULL)
 		return PS4_ERROR_ARGUMENT_MISSING;
 
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() & ~CR0_WP);
+	ps4KernProtectionWriteDisable();
 	for(size_t i = 0; i < size; ++i)
 	{
 		uint8_t t = at[i];
 		at[i] = bt[i];
 		bt[i] = t;
 	}
-	ps4KernRegisterCr0Set(ps4KernRegisterCr0Get() | CR0_WP);
+	ps4KernProtectionWriteEnable();
+
+	return PS4_OK;
+}
+
+int ps4KernMemoryFill(void *memory, uint8_t byte, size_t size)
+{
+	if(memory == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	ps4KernProtectionWriteDisable();
+	memset(memory, (int)byte, size);
+	ps4KernProtectionWriteEnable();
 
 	return PS4_OK;
 }

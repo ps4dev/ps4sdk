@@ -69,8 +69,8 @@ Ps4DefaultExceptionArgument;
 		Ps4ExceptionTryEnd
 #endif
 
-#ifndef Pps4ExceptionPlainTryFinally
-	#define Pps4ExceptionPlainTryFinally(name, ...) \
+#ifndef Ps4ExceptionPlainTryFinally
+	#define Ps4ExceptionPlainTryFinally(name, ...) \
 		Ps4ExceptionTryBegin \
 		Ps4ExceptionTryCatch \
 		Ps4ExceptionTryFinally \

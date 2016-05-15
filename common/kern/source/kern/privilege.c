@@ -6,7 +6,6 @@
 #include <sys/kernel.h>
 #include <sys/libkern.h>
 
-
 #include <sys/proc.h>
 #include <sys/event.h>
 #include <sys/kthread.h>
@@ -14,6 +13,43 @@
 #include <sys/ucred.h>
 
 #include <ps4/kern.h>
+
+#include <machine/specialreg.h>
+#include <machine/cpufunc.h>
+
+void ps4KernProtectionWriteDisable()
+{
+	load_cr0(rcr0() & ~CR0_WP);
+}
+
+void ps4KernProtectionWriteEnable()
+{
+	load_cr0(rcr0() | CR0_WP);
+}
+
+void ps4KernProtectionExecuteDisable() // gives you that extra tingly feeling (TM)
+{
+	uint64_t *ptr = (uint64_t *)ps4KernDlSym("pg_nx");
+	*ptr = 0;
+}
+
+void ps4KernProtectionExecuteEnable()
+{
+	uint64_t *ptr = (uint64_t *)ps4KernDlSym("pg_nx");
+	*ptr = 1ull << 63;
+}
+
+void ps4KernProtectionAllDisable()
+{
+	ps4KernProtectionWriteDisable();
+	ps4KernProtectionExecuteDisable();
+}
+
+void ps4KernProtectionAllEnable()
+{
+	ps4KernProtectionExecuteEnable();
+	ps4KernProtectionWriteEnable();
+}
 
 void ps4KernPrivilegeRoot()
 {

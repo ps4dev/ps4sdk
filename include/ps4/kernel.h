@@ -16,12 +16,23 @@ void *ps4KernelDlSym(char *name);
 int ps4KernelIsInKernel();
 int ps4KernelIsKernelAddress(void *addr);
 
-void ps4KernelRegisterCr0Set(uint64_t cr0); //FIXME: provide an atomic wp on/off switch...
+void ps4KernelRegisterCr0Set(uint64_t cr0);
 uint64_t ps4KernelRegisterCr0Get(void);
+
+void ps4KernelRegisterMsrSet(uint64_t msr, uint64_t value);
+uint64_t ps4KernelRegisterMsrGet(uint64_t msr);
+
 
 // sec stuff
 int ps4KernelUartEnable();
 int ps4KernelUartDisable();
+
+void ps4KernelProtectionAllDisable();
+void ps4KernelProtectionAllEnable();
+void ps4KernelProtectionWriteDisable();
+void ps4KernelProtectionWriteEnable();
+void ps4KernelProtectionExecuteDisable();
+void ps4KernelProtectionExecuteEnable();
 
 void ps4KernelPrivilegeRoot();
 int ps4KernelPrivilegeUnjail();

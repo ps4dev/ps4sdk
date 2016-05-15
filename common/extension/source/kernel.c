@@ -19,11 +19,6 @@ int ps4KernelIsInKernel()
 	return ps4KernIsInKernel();
 }
 
-int ps4KernelBrewCoffee()
-{
-	return PS4_ERROR_I_AM_A_TEAPOT;
-}
-
 int64_t ps4KernelCallBase(void *call, int64_t rdi, int64_t rsi, int64_t rdx, int64_t rcx, int64_t r8, int64_t r9)
 {
 	Ps4SyscallGenericCallArgument uap = {0};
@@ -55,6 +50,11 @@ __asm__("\
 	.popsection \n \
 ");
 
+int ps4KernelBrewCoffee()
+{
+	return ps4KernelCall((void *)ps4KernBrewCoffee);
+}
+
 void ps4KernelRegisterCr0Set(uint64_t cr0)
 {
 	ps4KernelCall((void *)ps4KernRegisterCr0Set, cr0);
@@ -63,6 +63,16 @@ void ps4KernelRegisterCr0Set(uint64_t cr0)
 uint64_t ps4KernelRegisterCr0Get(void)
 {
 	return (uint64_t)ps4KernelCall((void *)ps4KernRegisterCr0Get);
+}
+
+void ps4KernelRegisterMsrSet(uint64_t msr, uint64_t value)
+{
+	ps4KernelCall((void *)ps4KernRegisterMsrSet, msr, value);
+}
+
+uint64_t ps4KernelRegisterMsrGet(uint64_t msr)
+{
+	return (uint64_t)ps4KernelCall((void *)ps4KernRegisterMsrGet, msr);
 }
 
 void *ps4KernelDlSym(char *symbol)
@@ -78,6 +88,36 @@ int ps4KernelUartEnable()
 int ps4KernelUartDisable()
 {
 	return (int)ps4KernelCall((void *)ps4KernUartDisable);
+}
+
+void ps4KernelProtectionAllDisable()
+{
+	ps4KernelCall((void *)ps4KernProtectionAllDisable);
+}
+
+void ps4KernelProtectionAllEnable()
+{
+	ps4KernelCall((void *)ps4KernProtectionAllEnable);
+}
+
+void ps4KernelProtectionWriteDisable()
+{
+	ps4KernelCall((void *)ps4KernProtectionWriteDisable);
+}
+
+void ps4KernelProtectionWriteEnable()
+{
+	ps4KernelCall((void *)ps4KernProtectionWriteEnable);
+}
+
+void ps4KernelProtectionExecuteDisable()
+{
+	ps4KernelCall((void *)ps4KernProtectionExecuteDisable);
+}
+
+void ps4KernelProtectionExecuteEnable()
+{
+	ps4KernelCall((void *)ps4KernProtectionExecuteEnable);
 }
 
 int ps4KernelPrivilegeUnjail()

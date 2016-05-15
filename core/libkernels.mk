@@ -4,6 +4,8 @@ __inet_ntop \
 __inet_pton \
 __pthread_cleanup_pop_imp \
 __pthread_cleanup_push_imp \
+__stack_chk_fail \
+__stack_chk_fail_local \
 __stack_chk_guard \
 _exit \
 amd64_set_fsbase \
@@ -386,7 +388,6 @@ vfork \
 wait4 \
 write \
 writev \
-__stack_chk_fail \
 inet_ntop \
 inet_pton \
 pause \
