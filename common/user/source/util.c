@@ -87,9 +87,7 @@ int ps4UtilServerCreateEx(int port, int backlog, int try, unsigned int sec)
 	int r;
 
 	memset(&serverAddress, 0, sizeof(serverAddress));
-	#ifdef __FreeBSD__ //parent of our __PS4__
 	serverAddress.sin_len = sizeof(serverAddress);
-	#endif
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	serverAddress.sin_port = htons(port);
@@ -97,8 +95,9 @@ int ps4UtilServerCreateEx(int port, int backlog, int try, unsigned int sec)
 	for(; try > 0; --try)
 	{
 		server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if(server < 0)
-			sleep(sec);
+		if(server >= 0)
+			break;
+		sleep(sec);
 	}
 
 	if(server < 0)
@@ -120,6 +119,11 @@ int ps4UtilServerCreateEx(int port, int backlog, int try, unsigned int sec)
 	}
 
 	return server;
+}
+
+int ps4UtilServerCreate(int port)
+{
+	return ps4UtilServerCreateEx(port, 10, 20, 1);
 }
 
 int ps4UtilServerCreateSingleAccept(int port)

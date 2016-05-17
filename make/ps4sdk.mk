@@ -95,7 +95,8 @@ Lf ?=
 ###################################
 
 AssemblerFlags = -m64
-CompilerFlags = -std=c11 -O3 -Wall -pedantic -m64 -mcmodel=large $(IncludePath) $(Debug)
+CompilerNoWarningFlags = -Wno-zero-length-array -Wno-format-pedantic
+CompilerFlags = -std=c11 -O3 -Wall -pedantic -m64 -mcmodel=large $(CompilerNoWarningFlags) $(IncludePath) $(Debug)
 LinkerFlags = -O3 -Wall -m64 $(LibraryPath) $(Debug)
 ArchiverFlags = rcs
 

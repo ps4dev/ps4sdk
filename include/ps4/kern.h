@@ -9,5 +9,6 @@
 #include <ps4/kern/privilege.h>
 #include <ps4/kern/syscall.h>
 #include <ps4/kern/uart.h>
+#include <ps4/kern/util.h>
 
 #include <ps4/error.h>
