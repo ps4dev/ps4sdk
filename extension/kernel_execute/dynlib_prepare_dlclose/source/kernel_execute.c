@@ -26,14 +26,12 @@ int ps4KernelExecute(void *fn, void *uap, int64_t *ret0, int64_t *ret1)
 	if(syscall(SYS_ps4_callback, NULL) == -1)
 	{
 		Ps4SyscallGenericCallArgument u = {0};
-		//int64_t ret;
 		u.function = (void *)ps4KernSyscallCopyInAndPatch;
 		u.rdi = SYS_ps4_callback;
 		u.rsi = (register_t)ps4SyscallGenericExecute;
 		u.rdx = 128; // Ah, getting function sizes in C ... (-_-)'
 		u.rcx = 4;
-		int t = ps4ExploitExecute((sy_call_t *)ps4SyscallGenericCall, &u, NULL, NULL, NULL);
-		//printf("ret0 %i %llu\n", t, ret0);
+		ps4ExploitExecute((sy_call_t *)ps4SyscallGenericCall, &u, NULL, NULL, NULL);
 		if(syscall(SYS_ps4_callback, NULL) == -1)
 		{
 			//*errno = EAGAIN;

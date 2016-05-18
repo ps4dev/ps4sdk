@@ -30,6 +30,7 @@
 #include <netinet/in.h>
 
 #include <stdint.h>
+#include <stdarg.h>
 
 #include <ps4/kern.h>
 
@@ -58,6 +59,25 @@ int ps4KernUtilServerSocket(struct thread *td, int *sock, int domain, int type, 
 	fdrop(fp, td);
 
 	return (error);
+}
+
+int ps4KernUtilSocketClose(struct thread *td, int sock)
+{
+	return kern_close(td, sock);
+}
+
+int ps4KernUtilSeverAccept(struct thread *td, int server, int *client, struct sockaddr **address, socklen_t *address_len)
+{
+	int r;
+
+	if(client == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+ 	r = kern_accept(td, server, address, address_len, NULL);
+	if(r == 0)
+		*client = ps4KernThreadGetReturn0(td);
+
+	return r;
 }
 
 int ps4KernUtilServerListen(struct thread *td, int fd, int backlog)
@@ -144,4 +164,143 @@ int ps4KernUtilServerCreateSingleAccept(struct thread *td, int port)
 	//ps4KernThreadSetReturn0(td, 0);
 	kern_close(td, server);
 	return client;
+}
+
+int ps4KernUtilSocketPrint(struct thread *td, int sock, const char *format, ...)
+{
+	va_list args;
+	void *msg;
+	size_t size;
+	int r;
+
+	if(td == NULL || format == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	va_start(args, format);
+	r = ps4KernUtilStringAllocatePrintVariable((char **)&msg, (size_t *)&size, format, args);
+	va_end(args);
+
+	if(r != PS4_OK)
+		return r;
+
+	r = ps4KernUtilSocketSend(td, sock, msg, size);
+
+	ps4KernMemoryFree(msg);
+
+	return r;
+}
+
+int ps4KernUtilSocketSend(struct thread *td, int sock, const void *data, size_t size)
+{
+	struct msghdr msg;
+	struct iovec aiov;
+	int r;
+
+	msg.msg_name = NULL;
+	msg.msg_namelen = 0;
+	msg.msg_iov = &aiov;
+	msg.msg_iovlen = 1;
+	msg.msg_control = 0;
+	aiov.iov_base = (void *)data;
+	aiov.iov_len = size;
+
+	if(td == NULL || data == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	if(size == 0)
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
+
+	r = kern_sendit(td, sock, &msg, 0, NULL, UIO_SYSSPACE);
+
+	return r;
+}
+
+int ps4KernUtilStringAllocatePrint(char **string, size_t *size, const char *format, ...)
+{
+	va_list args;
+	int r;
+
+	if(string == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(size == NULL || format == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	va_start(args, format);
+	r = ps4KernUtilStringAllocatePrintVariable(string, size, format, args);
+	va_end(args);
+
+	return r;
+}
+
+int ps4KernUtilStringAllocatePrintVariable(char **string, size_t *size, const char *format, va_list args)
+{
+	va_list vargs;
+	size_t sz;
+	char *s;
+
+	if(string == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(size == NULL || format == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	va_copy(vargs, args);
+	sz = vsnprintf(NULL, 0, format, args);
+	s = NULL;
+	if(sz > 0)
+	{
+		s = ps4KernMemoryMalloc(sz + 2);
+		vsnprintf(s, sz + 1, format, vargs);
+	}
+	va_end(vargs);
+
+	if(size != NULL)
+		*size = sz;
+	*string = s;
+
+	return PS4_OK;
+}
+
+int ps4KernUtilFileWrite(struct thread *td, int fd, const void *data, size_t size)
+{
+	struct uio auio;
+	struct iovec aiov;
+	int r;
+
+	if(size == 0)
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
+
+	aiov.iov_base = (void *)data;
+	aiov.iov_len = size;
+	auio.uio_iov = &aiov;
+	auio.uio_iovcnt = 1;
+	auio.uio_resid = size;
+	auio.uio_segflg = UIO_SYSSPACE;
+
+	r = kern_writev(td, fd, &auio);
+
+	return r;
+}
+
+int ps4KernUtilFilePrint(struct thread *td, int fd, const char *format, ...)
+{
+	va_list args;
+	void *msg;
+	size_t size;
+	int r;
+
+	if(td == NULL || format == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	va_start(args, format);
+	r = ps4KernUtilStringAllocatePrintVariable((char **)&msg, (size_t *)&size, format, args);
+	va_end(args);
+
+	if(r != PS4_OK)
+		return r;
+
+	r = ps4KernUtilFileWrite(td, fd, msg, size);
+
+	ps4KernMemoryFree(msg);
+
+	return r;
 }
