@@ -18,3 +18,6 @@ int ps4KernUtilStringAllocatePrint(char **string, size_t *size, const char *form
 int ps4KernUtilStringAllocatePrintVariable(char **string, size_t *size, const char *format, va_list args);
 int ps4KernUtilFileWrite(struct thread *td, int fd, const void *data, size_t size);
 int ps4KernUtilFilePrint(struct thread *td, int fd, const char *format, ...);
+int ps4KernUtilFileClose(struct thread *td, int fd);
+int ps4KernUtilFileDuplicate2(struct thread *td, int from, int to, int *new);
+void ps4KernUtilStandardIoRedirectPlain(struct thread *td, int to);

@@ -304,3 +304,30 @@ int ps4KernUtilFilePrint(struct thread *td, int fd, const char *format, ...)
 
 	return r;
 }
+
+int ps4KernUtilFileClose(struct thread *td, int fd)
+{
+	return kern_close(td, fd);
+}
+
+int ps4KernUtilFileDuplicate2(struct thread *td, int from, int to, int *new)
+{
+	int r;
+	r = kern_fcntl(td, from, F_DUP2FD, to);
+	if(r == 0 && new != NULL)
+		*new = ps4KernThreadGetReturn0(td);
+	return r;
+}
+
+void ps4KernUtilStandardIoRedirectPlain(struct thread *td, int to)
+{
+	int i;
+	for(i = 0; i < 3; ++i)
+	{
+		//kern_close(td, i);
+		//if(to > 2)
+			ps4KernUtilFileDuplicate2(td, to, i, NULL);
+		//else
+		//	open("/dev/null", O_RDWR, 0);
+	}
+}
