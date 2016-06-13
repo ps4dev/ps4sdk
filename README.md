@@ -76,7 +76,7 @@ A stand alone elf-loader container is also available (but currently a bit large)
 # Make sure newest container is used
 docker pull ps4dev/elf-loader
 # Run the elf loader (listens on port 5350)
-docker run -p 5350:5350 -d ps4sdk/elf-loader
+docker run -p 5350:5350 -d ps4dev/elf-loader
 -> a411...774
 # Stop elf loader
 docker kill a411
