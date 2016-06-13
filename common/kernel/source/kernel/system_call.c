@@ -41,7 +41,7 @@ int ps4KernelSystemCallHookInitialize()
 	struct mtx *giant;
 	int r;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("Giant", (void **)&giant));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("Giant", (void **)&giant));
 
 	mtx_lock(giant);
 	if(ps4KernelSystemCallHookMutex == NULL)
@@ -125,7 +125,7 @@ int ps4KernelSystemCallPatchUnsafe(int number, sy_call_t *call, int argumentCoun
 {
     struct sysent *sy;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("sysent", (void **)&sy));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("sysent", (void **)&sy));
 
 	sched_pin();
     sy = &sy[number];
@@ -145,7 +145,7 @@ int ps4KernelSystemCallHookCreate(Ps4KernelSystemCallHook **hookh, int number)
     struct sysent *sy;
 	size_t prologueSize;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("sysent", (void **)&sy));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("sysent", (void **)&sy));
 
 	if(hookh == NULL)
 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
@@ -172,13 +172,13 @@ int ps4KernelSystemCallHookCreate(Ps4KernelSystemCallHook **hookh, int number)
 	ps4KernelMemoryAllocateData((void **)&arg->hook, arg->hookSize * sizeof(sy_call_t *));
 	ps4KernelMemoryAllocateData((void **)&arg->hookType, arg->hookSize * sizeof(int64_t));
 
-	ps4KernelSymbolLookup("malloc", (void **)&arg->allocate);
-	ps4KernelSymbolLookup("free", (void **)&arg->free);
-	ps4KernelSymbolLookup("M_TEMP", (void **)&arg->mt);
-	//ps4KernelSymbolLookup("_mtx_lock_sleep", (void **)&arg->lock);
-	//ps4KernelSymbolLookup("_mtx_unlock_sleep", (void **)&arg->unlock);
-	//ps4KernelSymbolLookup("atomic_cmpset_rel_ptr", (void **)&arg->release);
-	//ps4KernelSymbolLookup("atomic_cmpset_acq_ptr", (void **)&arg->acquire);
+	ps4KernelSymbolLookUp("malloc", (void **)&arg->allocate);
+	ps4KernelSymbolLookUp("free", (void **)&arg->free);
+	ps4KernelSymbolLookUp("M_TEMP", (void **)&arg->mt);
+	//ps4KernelSymbolLookUp("_mtx_lock_sleep", (void **)&arg->lock);
+	//ps4KernelSymbolLookUp("_mtx_unlock_sleep", (void **)&arg->unlock);
+	//ps4KernelSymbolLookUp("atomic_cmpset_rel_ptr", (void **)&arg->release);
+	//ps4KernelSymbolLookUp("atomic_cmpset_acq_ptr", (void **)&arg->acquire);
 
 	arg->clone = ps4KernelSystemCallHookArgumentClone;
 	arg->handler = ps4KernelSystemCallHookHandler;
@@ -213,7 +213,7 @@ int ps4KernelSystemCallHookDestroy(Ps4KernelSystemCallHook *hookh)
 
 	ps4ExceptionLeaveIf(PS4_ERROR_ARGUMENT_PRIMARY_MISSING, hookh == NULL);
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("sysent", (void **)&sy));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("sysent", (void **)&sy));
 
 	mtx_lock(ps4KernelSystemCallHookMutex);
 

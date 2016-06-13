@@ -36,7 +36,7 @@ int ps4KernelFunctionHookInitialize()
 	struct mtx *giant;
 	int r;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("Giant", (void **)&giant));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("Giant", (void **)&giant));
 
 	mtx_lock(giant);
 
@@ -268,11 +268,11 @@ int ps4KernelFunctionHookCreate(Ps4KernelFunctionHook **hookh, void *function)
 	arg->clone = (void *)ps4FunctionHookArgumentClone;
 	arg->epilogue = (void *)ps4FunctionHookArgumentDestroy;
 
-	ps4KernelSymbolLookup("malloc", (void **)&arg->allocate);
-	ps4KernelSymbolLookup("free", (void **)&arg->free);
-	ps4KernelSymbolLookup("M_TEMP", (void **)&arg->mt);
-	//ps4KernelSymbolLookup("_mtx_lock_sleep", (void **)&arg->lock);
-	//ps4KernelSymbolLookup("_mtx_unlock_sleep", (void **)&arg->unlock);
+	ps4KernelSymbolLookUp("malloc", (void **)&arg->allocate);
+	ps4KernelSymbolLookUp("free", (void **)&arg->free);
+	ps4KernelSymbolLookUp("M_TEMP", (void **)&arg->mt);
+	//ps4KernelSymbolLookUp("_mtx_lock_sleep", (void **)&arg->lock);
+	//ps4KernelSymbolLookUp("_mtx_unlock_sleep", (void **)&arg->unlock);
 
 	ps4PayloadFunctionHookProloguePatch(arg->prologue, arg);
 	ps4KernelMemoryCopy(arg->function, arg->bridge, arg->bridgeCopiedSize);

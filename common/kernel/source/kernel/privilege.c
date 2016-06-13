@@ -33,11 +33,11 @@ int ps4KernelPrivilegeUnjail()
 
 	ps4KernelThreadGetCurrent(&td);
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("prison0", &t));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("prison0", &t));
 	cr = td->td_proc->p_ucred;
 	cr->cr_prison = (struct prison *)t;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("rootvnode", &t));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("rootvnode", &t));
 	fd = td->td_proc->p_fd;
 	//fd->fd_cdir =
 	fd->fd_rdir = fd->fd_jdir = *(struct vnode **)t;

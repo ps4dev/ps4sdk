@@ -10,13 +10,13 @@
 #include <ps4/kernel.h>
 
 static Ps4KernelCache *cache;
-static struct mtx *ps4KernelSymbolLookupMutex; // FIXME: Use RW lock or RM locks
+static struct mtx *ps4KernelSymbolLookUpMutex; // FIXME: Use RW lock or RM locks
 
 #define PS4_KERNEL_CACHE_SYMBOL_LOOKUP "ps4.kernel.symbol.lookup"
 #define PS4_KERNEL_CACHE_SYMBOL_LOOKUP_CACHE PS4_KERNEL_CACHE_SYMBOL_LOOKUP ".cache"
 #define PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX PS4_KERNEL_CACHE_SYMBOL_LOOKUP ".mutex"
 
-int ps4KernelSymbolLookup(const char *str, void **value)
+int ps4KernelSymbolLookUp(const char *str, void **value)
 {
 	int r;
 
@@ -41,22 +41,22 @@ int ps4KernelSymbolLookup(const char *str, void **value)
 			}
 			ps4KernelCacheGlobalSet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_CACHE, cache);
 
-			ps4KernelMemoryAllocateData((void **)&ps4KernelSymbolLookupMutex, sizeof(struct mtx));
-			if(ps4KernelSymbolLookupMutex == NULL)
+			ps4KernelMemoryAllocateData((void **)&ps4KernelSymbolLookUpMutex, sizeof(struct mtx));
+			if(ps4KernelSymbolLookUpMutex == NULL)
 			{
 				ps4KernelCacheDestroy(cache);
 				mtx_unlock(giant);
 				return PS4_ERROR_KERNEL_OUT_OF_MEMORY;
 			}
-			mtx_init(ps4KernelSymbolLookupMutex, "ps4KernelSymbolLookupMutex", NULL, MTX_DEF | MTX_RECURSE);
-			ps4KernelCacheGlobalSet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX, ps4KernelSymbolLookupMutex);
+			mtx_init(ps4KernelSymbolLookUpMutex, "ps4KernelSymbolLookUpMutex", NULL, MTX_DEF | MTX_RECURSE);
+			ps4KernelCacheGlobalSet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX, ps4KernelSymbolLookUpMutex);
 		}
 		else
-			r = ps4KernelCacheGlobalGet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX, (void **)&ps4KernelSymbolLookupMutex);
+			r = ps4KernelCacheGlobalGet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX, (void **)&ps4KernelSymbolLookUpMutex);
 		mtx_unlock(giant);
 	}
 
-	mtx_lock(ps4KernelSymbolLookupMutex);
+	mtx_lock(ps4KernelSymbolLookUpMutex);
 	r = ps4KernelCacheGet(cache, str, value);
 	if(r != PS4_OK)
 	{
@@ -66,7 +66,7 @@ int ps4KernelSymbolLookup(const char *str, void **value)
 		if(v == NULL)
 			return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
 	}
-	mtx_unlock(ps4KernelSymbolLookupMutex);
+	mtx_unlock(ps4KernelSymbolLookUpMutex);
 
 	return PS4_OK;
 }

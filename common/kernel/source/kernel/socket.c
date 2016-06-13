@@ -189,7 +189,7 @@ int ps4KernelSocketAccept(Ps4KernelSocket *head, struct socket **client)
 	if((head->so_options & SO_ACCEPTCONN) == 0)
 		return EINVAL;
 
-	ps4ExpressionReturnOnError(ps4KernelSymbolLookup("accept_mtx", (void **)&accept_mtx));
+	ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("accept_mtx", (void **)&accept_mtx));
 
 	mtx_lock(accept_mtx);
 
@@ -241,7 +241,7 @@ int ps4KernelSocketAccept(Ps4KernelSocket *head, struct socket **client)
 	if(sa)
 	{
 		static struct malloc_type *mt;
-		ps4ExpressionReturnOnError(ps4KernelSymbolLookup("M_SONAME", (void **)&mt));
+		ps4ExpressionReturnOnError(ps4KernelSymbolLookUp("M_SONAME", (void **)&mt));
 		free(sa, mt);
 	}
 

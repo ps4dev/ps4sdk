@@ -1,3 +1,3 @@
 #pragma once
 
-int ps4KernelSymbolLookup(const char *str, void **value);
+int ps4KernelSymbolLookUp(const char *str, void **value);
