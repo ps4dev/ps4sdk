@@ -65,6 +65,8 @@
 #include <sys/ucred.h>
 #include <machine/proc.h>		/* Machine-dependent proc substruct. */
 
+#include <ps4/change.h>
+
 /*
  * One structure allocated per session.
  *
@@ -273,12 +275,12 @@ struct thread {
 
 /* Copied during fork1() or thread_sched_upcall(). */
 #define	td_startcopy td_endzero
-	u_char		td_rqindex;	/* (t) Run queue index. */
-	u_char		td_base_pri;	/* (t) Thread base kernel priority. */
-	u_char		td_priority;	/* (t) Thread active priority. */
-	u_char		td_pri_class;	/* (t) Scheduling class. */
-	u_char		td_user_pri;	/* (t) User pri from estcpu and nice. */
-	u_char		td_base_user_pri; /* (t) Base user pri */
+	/*u_char*/Ps4UnsignedInteger16		td_rqindex;	/* (t) Run queue index. */
+	/*u_char*/Ps4UnsignedInteger16		td_base_pri;	/* (t) Thread base kernel priority. */
+	/*u_char*/Ps4UnsignedInteger16		td_priority;	/* (t) Thread active priority. */
+	/*u_char*/Ps4UnsignedInteger16		td_pri_class;	/* (t) Scheduling class. */
+	/*u_char*/Ps4UnsignedInteger16		td_user_pri;	/* (t) User pri from estcpu and nice. */
+	/*u_char*/Ps4UnsignedInteger16		td_base_user_pri; /* (t) Base user pri */
 #define	td_endcopy td_pcb
 
 /*

@@ -20,8 +20,8 @@ Ps4MemoryShared;
 
 // This allows for stable webbrowser reopen and ipc m
 
-//FIXME: Implement Refcount and/or seperate unlink/close ?
-int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
+//FIXME: Implement Refcount?
+int ps4MemorySharedOpen(Ps4MemoryShared **memory, size_t size, const char *path)
 {
 	int handle;
 	Ps4MemoryShared *m;
@@ -35,7 +35,7 @@ int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
 
 	m = (Ps4MemoryShared *)malloc(sizeof(Ps4MemoryShared));
 	if(m == NULL)
-		return PS4_OUT_OF_MEMORY;
+		return PS4_ERROR_OUT_OF_MEMORY;
 
 	m->path = malloc((l + 1)* sizeof(char));
 	if(m->path == NULL)
@@ -81,7 +81,7 @@ int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size)
 	e1:
 		free(m);
 
-	return PS4_OUT_OF_MEMORY;
+	return PS4_ERROR_OUT_OF_MEMORY;
 }
 
 int ps4MemorySharedClose(Ps4MemoryShared *m)
@@ -106,16 +106,22 @@ int ps4MemorySharedUnlink(Ps4MemoryShared *m)
 	return r;
 }
 
-void *ps4MemorySharedGetAddress(Ps4MemoryShared *m)
+int ps4MemorySharedGetAddress(Ps4MemoryShared *memory, void **address)
 {
-	if(m == NULL)
-		return NULL;
-	return m->address;
+	if(memory == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(address == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	*address = memory->address;
+	return PS4_OK;
 }
 
-size_t ps4MemorySharedGetSize(Ps4MemoryShared *m)
+int ps4MemorySharedGetSize(Ps4MemoryShared *memory, size_t *size)
 {
-	if(m == NULL)
-		return 0;
-	return m->size;
+	if(memory == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(size == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	*size = memory->size;
+	return PS4_OK;
 }

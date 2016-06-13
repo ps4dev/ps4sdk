@@ -1,8 +1,8 @@
 .pushsection .text
 
-.global Ps4AssemblerRegisterParameterPush
-.type Ps4AssemblerRegisterParameterPush, @function
-Ps4AssemblerRegisterParameterPush:
+.global ps4AssemblerRegisterParameterPush
+.type ps4AssemblerRegisterParameterPush, @function
+ps4AssemblerRegisterParameterPush:
 	sub $192, %rsp
 	movq %rax, 8(%rsp)
 	movq 192(%rsp), %rax
@@ -22,11 +22,11 @@ Ps4AssemblerRegisterParameterPush:
 	movq %rdi, 16(%rsp)
 	movq %rax, 0(%rsp)
 	ret
-.size Ps4AssemblerRegisterParameterPush, .-Ps4AssemblerRegisterParameterPush
+.size ps4AssemblerRegisterParameterPush, .-ps4AssemblerRegisterParameterPush
 
-.global Ps4AssemblerRegisterParameterPop
-.type Ps4AssemblerRegisterParameterPop, @function
-Ps4AssemblerRegisterParameterPop:
+.global ps4AssemblerRegisterParameterPop
+.type ps4AssemblerRegisterParameterPop, @function
+ps4AssemblerRegisterParameterPop:
 	movq 0(%rsp), %rax
 	movq 16(%rsp), %rdi
 	movq 24(%rsp), %rsi
@@ -46,6 +46,6 @@ Ps4AssemblerRegisterParameterPop:
 	movq 8(%rsp), %rax
 	add $192, %rsp
 	ret
-.size Ps4AssemblerRegisterParameterPop, .-Ps4AssemblerRegisterParameterPop
+.size ps4AssemblerRegisterParameterPop, .-ps4AssemblerRegisterParameterPop
 
 .popsection

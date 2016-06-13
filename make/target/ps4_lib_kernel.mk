@@ -7,7 +7,7 @@ include $(MakePath)/trait/pic.mk
 ###################################
 
 include $(MakePath)/trait/common.mk
-include $(MakePath)/trait/kern.mk
+include $(MakePath)/trait/kernel.mk
 include $(MakePath)/trait/base.mk
 
 ###################################

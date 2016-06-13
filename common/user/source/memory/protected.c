@@ -31,7 +31,7 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 
 	m = (Ps4MemoryProtected *)malloc(sizeof(Ps4MemoryProtected));
 	if(m == NULL)
-		return PS4_OUT_OF_MEMORY;
+		return PS4_ERROR_OUT_OF_MEMORY;
 
 	m->size = (size / pageSize + 1) * pageSize; // align to pageSize
 
@@ -64,7 +64,7 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 	e1:
 		free(m);
 
-	return PS4_OUT_OF_MEMORY; // make error codes proper errnos ... everywhere ... meh
+	return PS4_ERROR_OUT_OF_MEMORY; // make error codes proper errnos ... everywhere ... meh
 }
 
 int ps4MemoryProtectedDestroy(Ps4MemoryProtected *memory)
@@ -78,23 +78,32 @@ int ps4MemoryProtectedDestroy(Ps4MemoryProtected *memory)
 	return r;
 }
 
-void *ps4MemoryProtectedGetWritableAddress(Ps4MemoryProtected *memory)
+int ps4MemoryProtectedGetWritableAddress(Ps4MemoryProtected *memory, void **address)
 {
 	if(memory == NULL)
-		return NULL;
-	return memory->writable;
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(address == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	*address = memory->writable;
+	return PS4_OK;
 }
 
-void *ps4MemoryProtectedGetExecutableAddress(Ps4MemoryProtected *memory)
+int ps4MemoryProtectedGetExecutableAddress(Ps4MemoryProtected *memory, void **address)
 {
 	if(memory == NULL)
-		return NULL;
-	return memory->executable;
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(address == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	*address = memory->executable;
+	return PS4_OK;
 }
 
-size_t ps4MemoryProtectedGetSize(Ps4MemoryProtected *memory)
+int ps4MemoryProtectedGetSize(Ps4MemoryProtected *memory, size_t *size)
 {
 	if(memory == NULL)
-		return 0;
-	return memory->size;
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(size == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	*size = memory->size;
+	return PS4_OK;
 }

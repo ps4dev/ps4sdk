@@ -28,7 +28,7 @@
  *
  * $FreeBSD: release/9.0.0/sys/sys/acl.h 220465 2011-04-09 07:42:25Z trasz $
  */
-/* 
+/*
  * Developed by the TrustedBSD Project.
  * Support for POSIX.1e and NFSv4 access control lists.
  */

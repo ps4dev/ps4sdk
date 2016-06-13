@@ -1,0 +1,3 @@
+#pragma once
+
+#define PS4_LIMIT_STRING_LENGTH_MAXIMUM 4096

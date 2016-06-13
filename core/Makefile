@@ -1,6 +1,6 @@
 ###################################
 
-Ps4Sdk=$(CURDIR)/..
+Ps4Sdk ?= $(CURDIR)/..
 
 target := ps4_lib_no_all
 BuildPath := $(Ps4Sdk)/build

@@ -30,11 +30,11 @@
 		.L##name##KernelAddress
 #endif
 
-#ifndef Ps4StubSyscallSymbol
-	#define Ps4StubSyscallSymbol(name) name
+#ifndef Ps4StubSystemCallSymbol
+	#define Ps4StubSystemCallSymbol(name) name
 #endif
-#ifndef Ps4StubSyscallNumber
-	#define Ps4StubSyscallNumber(name) SYS_##name
+#ifndef Ps4StubSystemCallNumber
+	#define Ps4StubSystemCallNumber(name) SYS_##name
 #endif
 
 #ifndef Ps4StubData
@@ -107,7 +107,7 @@
 			.global "#function" \n \
 			.type "#function", @function \n \
 			"#function": \n \
-				test $0, %al #this is a two byte type marker, see resolve.c \n \
+				test $0, %al #this is a two byte type marker \n \
 				mov %rax, %r11 \n \
 				movabs "#functionAddress", %rax \n \
 				xchg %rax, %r11 \n \
@@ -115,7 +115,7 @@
 				jz .L"#function"R \n \
 					jmp *%r11 \n \
 				.L"#function"R: \n \
-					call Ps4AssemblerRegisterParameterPush \n \
+					call ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#moduleName", %rsi \n \
 					movabs $"#functionName", %rdx \n \
@@ -124,7 +124,7 @@
 					xor %rax, %rax \n \
 					call ps4StubResolve \n \
 					mov %rax, %r11 \n \
-					call Ps4AssemblerRegisterParameterPop \n \
+					call ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -154,14 +154,14 @@
 				jz .L"#function"R \n \
 					jmp *%r11 \n \
 				.L"#function"R: \n \
-					call Ps4AssemblerRegisterParameterPush \n \
+					call ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#functionName", %rsi \n \
 					movabs $"#functionAddress", %rdx \n \
 					xor %rax, %rax \n \
-					call ps4KernStubResolve \n \
+					call ps4KernelStubResolve \n \
 					mov %rax, %r11 \n \
-					call Ps4AssemblerRegisterParameterPop \n \
+					call ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -175,11 +175,11 @@
 // use rsp to check ring 0 ...
 // if so, resolve and user kernel fn
 // otherwise use useland stuff
-#ifndef Ps4StubMixedFunctionStub
-	#define Ps4StubMixedFunctionStub(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress) \
-		Ps4StubMixedFunctionStub_(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress)
+#ifndef Ps4StubAdaptiveFunctionStub
+	#define Ps4StubAdaptiveFunctionStub(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress) \
+		Ps4StubAdaptiveFunctionStub_(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress)
 
-	#define Ps4StubMixedFunctionStub_(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress) \
+	#define Ps4StubAdaptiveFunctionStub_(function, moduleName, functionName, moduleHandle, userFunctionAddress, kernelFunctionAddress) \
 		__asm__(" \
 			.pushsection .text \n \
 			.global "#function" \n \
@@ -201,7 +201,7 @@
 					jz .L"#function"R \n \
 						jmp *%r11 \n \
 				.L"#function"R: \n \
-					call Ps4AssemblerRegisterParameterPush \n \
+					call ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#moduleName", %rsi \n \
 					movabs $"#functionName", %rdx \n \
@@ -209,9 +209,9 @@
 					movabs $"#userFunctionAddress", %r8 \n \
 					movabs $"#kernelFunctionAddress", %r9 \n \
 					xor %rax, %rax \n \
-					call ps4MixedStubResolve \n \
+					call ps4AdaptiveStubResolve \n \
 					mov %rax, %r11 \n \
-					call Ps4AssemblerRegisterParameterPop \n \
+					call ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -222,11 +222,11 @@
 		");
 #endif
 
-#ifndef Ps4StubMixedSyscallStub
-	#define Ps4StubMixedSyscallStub(function, functionName, functionAddress, number) \
-		Ps4StubMixedSyscallStub_(function, functionName, functionAddress, number)
+#ifndef Ps4StubAdaptiveSystemCallStub
+	#define Ps4StubAdaptiveSystemCallStub(function, functionName, functionAddress, number) \
+		Ps4StubAdaptiveSystemCallStub_(function, functionName, functionAddress, number)
 
-	#define Ps4StubMixedSyscallStub_(function, functionName, functionAddress, number) \
+	#define Ps4StubAdaptiveSystemCallStub_(function, functionName, functionAddress, number) \
 		__asm__(" \
 			.pushsection .text \n \
 			.global "#function" \n \
@@ -239,7 +239,7 @@
 				test %rax, %rax \n \
 				jnz .L"#function"K \n \
 					movq $"#number", %rax \n \
-					jmp ps4AssemblerSyscall \n \
+					jmp ps4AssemblerSystemCall \n \
 				.L"#function"K: \n \
 					movabs "#functionAddress", %rax \n \
 					xchg %rax, %r11 \n \
@@ -247,14 +247,14 @@
 					jz .L"#function"R \n \
 						jmp *%r11 \n \
 				.L"#function"R: \n \
-					call Ps4AssemblerRegisterParameterPush \n \
+					call ps4AssemblerRegisterParameterPush \n \
 					movabs $"#function", %rdi \n \
 					movabs $"#functionName", %rsi \n \
 					movabs $"#functionAddress", %rdx \n \
 					xor %rax, %rax \n \
-					call ps4KernStubResolve \n \
+					call ps4KernelStubResolve \n \
 					mov %rax, %r11 \n \
-					call Ps4AssemblerRegisterParameterPop \n \
+					call ps4AssemblerRegisterParameterPop \n \
 					test %r11, %r11 \n \
 					jnz .L"#function"E \n \
 					jmp "#function" \n \
@@ -265,11 +265,11 @@
 		");
 #endif
 
-#ifndef Ps4StubSyscallStub
-	#define Ps4StubSyscallStub(function, number) \
-		Ps4StubSyscallStub_(function, number)
+#ifndef Ps4StubSystemCallStub
+	#define Ps4StubSystemCallStub(function, number) \
+		Ps4StubSystemCallStub_(function, number)
 
-	#define Ps4StubSyscallStub_(function, number) \
+	#define Ps4StubSystemCallStub_(function, number) \
 		__asm__("\
 			.pushsection .text \n \
 			.global "#function"\n \
@@ -277,26 +277,26 @@
 		 	"#function":\n \
 				test $4, %al \n \
 				movq $"#number", %rax \n \
-				jmp ps4AssemblerSyscall \n \
+				jmp ps4AssemblerSystemCall \n \
 			.size "#function", .-"#function" \n \
 			.popsection \n \
 		");
 #endif
 
-#ifndef Ps4StubSyscallNamed
-	#define Ps4StubSyscallNamed(name, number) \
-		Ps4StubSyscallNamed_(name, number)
+#ifndef Ps4StubSystemCallNamed
+	#define Ps4StubSystemCallNamed(name, number) \
+		Ps4StubSystemCallNamed_(name, number)
 
-	#define Ps4StubSyscallNamed_(name, number) \
-		Ps4StubSyscallStub(Ps4StubSyscallSymbol(name), number)
+	#define Ps4StubSystemCallNamed_(name, number) \
+		Ps4StubSystemCallStub(Ps4StubSystemCallSymbol(name), number)
 #endif
 
-#ifndef Syscall
-	#define Ps4StubSyscall(name) \
-		Ps4StubSyscall_(name)
+#ifndef SystemCall
+	#define Ps4StubSystemCall(name) \
+		Ps4StubSystemCall_(name)
 
-	#define Ps4StubSyscall_(name) \
-		Ps4StubSyscallStub(Ps4StubSyscallSymbol(name), Ps4StubSyscallNumber(name))
+	#define Ps4StubSystemCall_(name) \
+		Ps4StubSystemCallStub(Ps4StubSystemCallSymbol(name), Ps4StubSystemCallNumber(name))
 #endif
 
 #ifndef Ps4StubFunction
@@ -319,23 +319,23 @@
 		Ps4StubKernFunctionStub(Ps4StubFunctionSymbol(name), Ps4StubFunctionNameSymbol(name), Ps4StubKernFunctionAddressSymbol(name))
 #endif
 
-#ifndef Ps4StubMixedFunction
-	#define Ps4StubMixedFunction(module, name) \
-		Ps4StubMixedFunction_(module, name)
+#ifndef Ps4StubAdaptiveFunction
+	#define Ps4StubAdaptiveFunction(module, name) \
+		Ps4StubAdaptiveFunction_(module, name)
 
-	#define Ps4StubMixedFunction_(module, name) \
+	#define Ps4StubAdaptiveFunction_(module, name) \
 		Ps4StubFunctionNameData(Ps4StubFunctionNameSymbol(name), Ps4StubFunctionSymbol(name)) \
 		Ps4StubFunctionAddressData(Ps4StubFunctionAddressSymbol(name)) \
 		Ps4StubKernFunctionAddressData(Ps4StubKernFunctionAddressSymbol(name)) \
-		Ps4StubMixedFunctionStub(Ps4StubFunctionSymbol(name), Ps4StubModuleNameSymbol(module), Ps4StubFunctionNameSymbol(name),  Ps4StubModuleSymbol(module), Ps4StubFunctionAddressSymbol(name), Ps4StubKernFunctionAddressSymbol(name))
+		Ps4StubAdaptiveFunctionStub(Ps4StubFunctionSymbol(name), Ps4StubModuleNameSymbol(module), Ps4StubFunctionNameSymbol(name),  Ps4StubModuleSymbol(module), Ps4StubFunctionAddressSymbol(name), Ps4StubKernFunctionAddressSymbol(name))
 #endif
 
-#ifndef Ps4StubMixedSyscall
-	#define Ps4StubMixedSyscall(name) \
-		Ps4StubMixedSyscall_(name)
+#ifndef Ps4StubAdaptiveSystemCall
+	#define Ps4StubAdaptiveSystemCall(name) \
+		Ps4StubAdaptiveSystemCall_(name)
 
-	#define Ps4StubMixedSyscall_(name) \
+	#define Ps4StubAdaptiveSystemCall_(name) \
 		Ps4StubFunctionNameData(Ps4StubFunctionNameSymbol(name), Ps4StubFunctionSymbol(name)) \
 		Ps4StubKernFunctionAddressData(Ps4StubKernFunctionAddressSymbol(name)) \
-		Ps4StubMixedSyscallStub(Ps4StubFunctionSymbol(name), Ps4StubFunctionNameSymbol(name), Ps4StubKernFunctionAddressSymbol(name), Ps4StubSyscallNumber(name))
+		Ps4StubAdaptiveSystemCallStub(Ps4StubFunctionSymbol(name), Ps4StubFunctionNameSymbol(name), Ps4StubKernFunctionAddressSymbol(name), Ps4StubSystemCallNumber(name))
 #endif

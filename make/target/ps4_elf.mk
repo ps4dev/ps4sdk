@@ -7,14 +7,13 @@ include $(MakePath)/trait/link.mk
 
 ###################################
 
-include $(MakePath)/trait/common_extension.mk
 include $(MakePath)/trait/kernel_execute.mk
 include $(MakePath)/trait/common.mk
-include $(MakePath)/trait/mixed.mk
+include $(MakePath)/trait/adaptive.mk
 include $(MakePath)/trait/sce.mk
-include $(MakePath)/trait/kern.mk
+include $(MakePath)/trait/kernel.mk
 include $(MakePath)/trait/base.mk
-include $(MakePath)/trait/syscall_rop_0x93a4FFFF8.mk
+include $(MakePath)/trait/system_call_rop_0x93a4FFFF8.mk
 
 ###################################
 

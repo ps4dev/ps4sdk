@@ -45,6 +45,8 @@
 #include <sys/sockopt.h>
 #endif
 
+#include <ps4/change.h>
+
 struct vnet;
 
 /*
@@ -70,10 +72,10 @@ struct socket;
  */
 struct socket {
 	int	so_count;		/* (b) reference count */
-	short	so_type;		/* (a) generic type, see socket.h */
-	short	so_options;		/* from socket call, see socket.h */
-	short	so_linger;		/* time to linger while closing */
-	short	so_state;		/* (b) internal state flags SS_* */
+	/*short*/Ps4Integer32	so_type;		/* (a) generic type, see socket.h */
+	/*short*/Ps4Integer32	so_options;		/* from socket call, see socket.h */
+	/*short*/Ps4Integer32	so_linger;		/* time to linger while closing */
+	/*short*/Ps4Integer32	so_state;		/* (b) internal state flags SS_* */
 	int	so_qstate;		/* (e) internal state flags SQ_* */
 	void	*so_pcb;		/* protocol control block */
 	struct	vnet *so_vnet;		/* network stack instance */
@@ -162,10 +164,10 @@ extern struct mtx accept_mtx;
 struct xsocket {
 	size_t	xso_len;	/* length of this structure */
 	struct	socket *xso_so;	/* makes a convenient handle sometimes */
-	short	so_type;
-	short	so_options;
-	short	so_linger;
-	short	so_state;
+	/*short*/Ps4Integer32	so_type;
+	/*short*/Ps4Integer32	so_options;
+	/*short*/Ps4Integer32	so_linger;
+	/*short*/Ps4Integer32	so_state;
 	caddr_t	so_pcb;		/* another convenient handle */
 	int	xso_protocol;
 	int	xso_family;

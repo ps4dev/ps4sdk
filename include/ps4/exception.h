@@ -14,8 +14,8 @@ Ps4DefaultExceptionArgument;
 		goto ps4ExceptionRun__;
 #endif
 
-#ifndef Ps4ExceptionTryCatch
-	#define Ps4ExceptionTryCatch \
+#ifndef Ps4ExceptionTryCatchBegin
+	#define Ps4ExceptionTryCatchBegin \
 		goto ps4ExceptionCatch__; \
 		ps4ExceptionCatch__:
 #endif
@@ -29,8 +29,8 @@ Ps4DefaultExceptionArgument;
 		}
 #endif
 
-#ifndef Ps4ExceptionTryFinally
-	#define Ps4ExceptionTryFinally \
+#ifndef Ps4ExceptionTryFinallyBegin
+	#define Ps4ExceptionTryFinallyBegin \
 		goto ps4ExceptionFinally__; \
 		ps4ExceptionFinally__:
 #endif
@@ -52,38 +52,38 @@ Ps4DefaultExceptionArgument;
 		ps4ExceptionRun__:
 #endif
 
-#ifndef Ps4ExceptionPlainTry
-	#define Ps4ExceptionPlainTry() \
+#ifndef Ps4ExceptionTry
+	#define Ps4ExceptionTry() \
 		Ps4ExceptionTryBegin \
-		Ps4ExceptionTryCatch \
-		Ps4ExceptionTryFinally \
+		Ps4ExceptionTryCatchBegin \
+		Ps4ExceptionTryFinallyBegin \
 		Ps4ExceptionTryEnd
 #endif
 
-#ifndef Ps4ExceptionPlainTryCatch
-	#define Ps4ExceptionPlainTryCatch(name, ...) \
+#ifndef Ps4ExceptionTryCatch
+	#define Ps4ExceptionTryCatch(name, ...) \
 		Ps4ExceptionTryBegin \
-		Ps4ExceptionTryCatch \
+		Ps4ExceptionTryCatchBegin \
 		Ps4ExceptionTryCatching(name, name, __VA_ARGS__) \
-		Ps4ExceptionTryFinally \
+		Ps4ExceptionTryFinallyBegin \
 		Ps4ExceptionTryEnd
 #endif
 
-#ifndef Ps4ExceptionPlainTryFinally
-	#define Ps4ExceptionPlainTryFinally(name, ...) \
+#ifndef Ps4ExceptionTryFinally
+	#define Ps4ExceptionTryFinally(name, ...) \
 		Ps4ExceptionTryBegin \
-		Ps4ExceptionTryCatch \
-		Ps4ExceptionTryFinally \
+		Ps4ExceptionTryCatchBegin \
+		Ps4ExceptionTryFinallyBegin \
 		Ps4ExceptionTryFinalizing(name, name, __VA_ARGS__) \
 		Ps4ExceptionTryEnd
 #endif
 
-#ifndef Ps4ExceptionPlainTryCatchFinally
-	#define Ps4ExceptionPlainTryCatchFinally(name, ...) \
+#ifndef Ps4ExceptionTryCatchFinally
+	#define Ps4ExceptionTryCatchFinally(name, ...) \
 		Ps4ExceptionTryBegin \
-		Ps4ExceptionTryCatch \
+		Ps4ExceptionTryCatchBegin \
 		Ps4ExceptionTryCatching(name, name, __VA_ARGS__) \
-		Ps4ExceptionTryFinally \
+		Ps4ExceptionTryFinallyBegin \
 		Ps4ExceptionTryFinalizing(name, name, __VA_ARGS__) \
 		Ps4ExceptionTryEnd
 #endif
@@ -107,8 +107,6 @@ Ps4DefaultExceptionArgument;
 		static inline void name##Finally__(struct name##ExceptionArgument__ e)
 #endif
 
-//ps4ExceptionValue__ = (__typeof(ps4ExceptionValue__)){name, __VA_ARGS__};
-
 #ifndef ps4ExceptionThrowIf
 	#define ps4ExceptionThrowIf(number, condition) \
 		do \
@@ -129,7 +127,7 @@ Ps4DefaultExceptionArgument;
 
 #ifndef ps4ExceptionThrow
 	#define ps4ExceptionThrow(number) \
-		ps4ExceptionAssert(number, 1)
+		ps4ExceptionThrowIf(number, 1)
 #endif
 
 #ifndef ps4ExceptionRethrow

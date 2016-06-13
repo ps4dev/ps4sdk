@@ -6,8 +6,8 @@
 
 typedef struct Ps4MemoryShared Ps4MemoryShared;
 
-int ps4MemorySharedOpen(Ps4MemoryShared **memory, const char *path, size_t size);
+int ps4MemorySharedOpen(Ps4MemoryShared **memory, size_t size, const char *path);
 int ps4MemorySharedClose(Ps4MemoryShared *memory);
 int ps4MemorySharedUnlink(Ps4MemoryShared *memory);
-void *ps4MemorySharedGetAddress(Ps4MemoryShared *memory);
-size_t ps4MemorySharedGetSize(Ps4MemoryShared *memory);
+int ps4MemorySharedGetAddress(Ps4MemoryShared *memory, void **address);
+int ps4MemorySharedGetSize(Ps4MemoryShared *memory, size_t *size);

@@ -33,6 +33,8 @@
 #include <sys/cdefs.h>
 #include <sys/_types.h>
 
+#include <ps4/change.h>
+
 #if __has_extension(c_atomic) || __has_extension(cxx_atomic)
 #define	__CLANG_ATOMICS
 #elif __GNUC_PREREQ__(4, 7)

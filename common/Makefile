@@ -13,19 +13,18 @@ endif
 target ?= ps4_lib_no_all
 BuildPath := $(Ps4Sdk)/build
 OutPath := $(Ps4Sdk)/lib
-IncludePath := -Iisolate/include
 
 include $(Ps4Sdk)/make/ps4sdk.mk
 
 define generateCObject
-$(patsubst %,$(BuildPath)/%,$(patsubst %.c,%.o,$(1))): $(1)
+$(patsubst %,$(BuildPath)/%,$(patsubst %.c,%.c.o,$(1))): $(1)
 	$$(dirp)
 	$$(compile)
 
 endef
 
 define generateSObject
-$(patsubst %,$(BuildPath)/%,$(patsubst %.s,%.o,$(1))): $(1)
+$(patsubst %,$(BuildPath)/%,$(patsubst %.s,%.s.o,$(1))): $(1)
 	$$(dirp)
 	$$(assemble)
 
@@ -35,7 +34,7 @@ define generateTarget
 $(foreach i,$(call findwildcard, $(1)source/, *.c),$(call generateCObject,$(i)))
 $(foreach i,$(call findwildcard, $(1)source/, *.s),$(call generateSObject,$(i)))
 
-$(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a: $(patsubst %,$(BuildPath)/%, $(patsubst %.c,%.o,$(call findwildcard, $(1)source/, *.c)) $(patsubst %.s,%.o,$(call findwildcard, $(1)source/, *.s)))
+$(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a: $(patsubst %,$(BuildPath)/%, $(patsubst %.c,%.c.o,$(call findwildcard, $(1)source/, *.c)) $(patsubst %.s,%.s.o,$(call findwildcard, $(1)source/, *.s)))
 	$$(dirp)
 	$$(archive)
 all:: $(OutPath)/libPs4_common_$(subst /,_,$(patsubst %/,%,$(1))).a

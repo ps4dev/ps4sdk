@@ -1,14 +1,14 @@
 #include <stddef.h>
 
-#include <ps4/kern.h>
+#include <ps4/kernel.h>
 #include <ps4/stub_resolve.h>
 
-int ps4KernStubResolve(void *stubAddress, char *functionName, void **kernelAddress)
+int ps4KernelStubResolve(void *stub, char *functionName, void **kernelAddress)
 {
-	if(stubAddress == NULL || functionName == NULL || kernelAddress == NULL)
+	if(stub == NULL || functionName == NULL || kernelAddress == NULL)
 		return -1;
 
-	*kernelAddress = ps4KernDlSym(functionName);
+	*kernelAddress = ps4KernelDlSym(functionName);
 	if(*kernelAddress == NULL)
 		return -1;
 

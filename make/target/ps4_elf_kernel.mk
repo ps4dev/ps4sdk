@@ -8,7 +8,7 @@ include $(MakePath)/trait/link.mk
 ###################################
 
 include $(MakePath)/trait/common.mk
-include $(MakePath)/trait/kern.mk
+include $(MakePath)/trait/kernel.mk
 include $(MakePath)/trait/base.mk
 
 ###################################

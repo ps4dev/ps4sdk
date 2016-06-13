@@ -1,67 +1,31 @@
 #pragma once
 
-#include <sys/sysent.h>
-#include <stdint.h>
+#define _KERNEL
+#define _STANDALONE
+#define __BSD_VISIBLE 1
 
-// call
-// extension signature, base for kernel execution
-int ps4KernelExecute(void *call, void *uap, int64_t *ret0, int64_t *ret1);
-// Omnislash - 9999, 9999, .... - Mimic - ...
-int64_t ps4KernelCall(void *call, ...);
-int64_t ps4KernelCallBase(void *call, int64_t rdi, int64_t rsi, int64_t rdx, int64_t rcx, int64_t r8, int64_t r9);
+#include <sys/cdefs.h>
+#undef offsetof
+#include <sys/types.h>
+#include <sys/param.h>
+#include <sys/kthread.h>
 
-// info & util
-int ps4KernelBrewCoffee();
-void *ps4KernelDlSym(char *name);
-int ps4KernelIsInKernel();
-int ps4KernelIsKernelAddress(void *addr);
+// these are not to be included directly, for now
+#include <ps4/kernel/base.h>
+#include <ps4/kernel/cache.h>
+#include <ps4/kernel/cache_global.h>
+#include <ps4/kernel/descriptor.h>
+#include <ps4/kernel/function.h>
+#include <ps4/kernel/memory.h>
+#include <ps4/kernel/privilege.h>
+#include <ps4/kernel/protection.h>
+#include <ps4/kernel/register.h>
+#include <ps4/kernel/socket.h>
+#include <ps4/kernel/symbol.h>
+#include <ps4/kernel/system_call.h>
+#include <ps4/kernel/thread.h>
+#include <ps4/kernel/uart.h>
 
-void ps4KernelRegisterCr0Set(uint64_t cr0);
-uint64_t ps4KernelRegisterCr0Get(void);
-
-void ps4KernelRegisterMsrSet(uint64_t msr, uint64_t value);
-uint64_t ps4KernelRegisterMsrGet(uint64_t msr);
-
-
-// sec stuff
-int ps4KernelUartEnable();
-int ps4KernelUartDisable();
-
-void ps4KernelProtectionAllDisable();
-void ps4KernelProtectionAllEnable();
-void ps4KernelProtectionWriteDisable();
-void ps4KernelProtectionWriteEnable();
-void ps4KernelProtectionExecuteDisable();
-void ps4KernelProtectionExecuteEnable();
-
-void ps4KernelPrivilegeRoot();
-int ps4KernelPrivilegeUnjail();
-int ps4KernelPrivilegeEscalate();
-
-// memory
-int ps4KernelMemoryAllocate(void **memory, size_t size);
-void *ps4KernelMemoryMalloc(size_t size);
-void ps4KernelMemoryFree(void *addr);
-void ps4KernelMemoryCopy(void *src, void *dest, size_t size);
-
-int ps4KernelAssemblerInstructionNext(void *base, size_t *next);
-int ps4KernelAssemblerInstructionSeek(void *base, size_t *offset);
-
-// patch and hook
-
-void ps4KernelFunctionPatchToJump(void *function, void *to);
-void ps4KernelFunctionPatchToReturn(void *function, int64_t ret);
-
-typedef struct Ps4KernelFunctionHook Ps4KernelFunctionHook;
-
-//int ps4KernelFunctionHookCreate(Ps4KernFunctionHook **hookh, void *function, void *hook);
-int ps4KernelFunctionHookCreateSized(Ps4KernelFunctionHook **hookh, void *function, void *hook, size_t size);
-int ps4KernelFunctionHookDestroy(Ps4KernelFunctionHook *hookh);
-int ps4KernelFunctionHookAdd(Ps4KernelFunctionHook *hookh, void *hook);
-int ps4KernelFunctionHookRemove(Ps4KernelFunctionHook *hookh, void *hook);
-
-//int ps4KernelFunctionHook(void *function, void *hook, Ps4KernFunctionHook **hookh);
-int ps4KernelFunctionHookSized(void *function, void *hook, size_t size);
-int ps4KernelFunctionIsHooked(void *function);
-int ps4KernelFunctionGetHook(void *function, Ps4KernelFunctionHook **hook);
-int ps4KernelFunctionUnhook(void *function);
+#include <ps4/error.h>
+#include <ps4/exception.h>
+#include <ps4/expression.h>

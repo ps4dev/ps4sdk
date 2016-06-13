@@ -2,5 +2,5 @@
 
 #include <stddef.h>
 
-int ps4MachineInstructionNext(void *base, size_t *next);
-int ps4MachineInstructionSeek(void *base, size_t *offset);
+int ps4MachineInstructionNext(void *current, void **next);
+int ps4MachineInstructionSeek(void *current, void **found, size_t offset);
