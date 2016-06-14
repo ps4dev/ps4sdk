@@ -65,8 +65,9 @@ do not have to build ps4sdk yourself. However, the image is a bit large due to t
 # Make sure newest container is used
 docker pull ps4dev/ps4sdk
 # Run docker for interactive development
+# It should not be used to store data (-rm will auto remove it after exit)
 # See volumes/-v on how to mount your code into the container
-docker run (-v ... ) -i -t ps4dev/ps4sdk bash
+docker run (-v ... ) -rm -i -t ps4dev/ps4sdk bash
 ```
 
 From there, you can clone the elf-loader and examples into your volume, build and use them.
@@ -76,8 +77,7 @@ A stand alone elf-loader container is also available (but currently a bit large)
 # Make sure newest container is used
 docker pull ps4dev/elf-loader
 # Run the elf loader (listens on port 5350)
-docker run -p 5350:5350 -d ps4dev/elf-loader
--> a411...774
+docker run -p 5350:5350 -rm ps4dev/elf-loader&
 # Stop elf loader
-docker kill a411
+docker kill $(docker ps -q -f ancestor=ps4dev/elf-loader)
 ```
