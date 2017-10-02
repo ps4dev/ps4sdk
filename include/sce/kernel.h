@@ -28,6 +28,9 @@ int sceKernelCreateEqueue(SceKernelEqueue *eq, const char *name);
 int sceKernelDeleteEqueue(SceKernelEqueue eq);
 int sceKernelAddUserEvent(SceKernelEqueue eq, int id);
 int sceKernelAddReadEvent(SceKernelEqueue eq, int fd, size_t size, void *data);
+int sceKernelWaitEqueue(SceKernelEqueue eq, SceKernelEvent *ev, int num, int *out, SceKernelUseconds *timo);   
+
+size_t sceKernelGetDirectMemorySize();
 
 /* more interresting wrappers */
 int sceKernelAllocateDirectMemory(off_t searchStart, off_t searchEnd, size_t length, size_t alignment, int type, off_t *physicalAddressDestination);

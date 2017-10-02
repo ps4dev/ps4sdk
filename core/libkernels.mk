@@ -267,7 +267,9 @@ sceKernelAddUserEvent \
 sceKernelAllocateDirectMemory \
 sceKernelCreateEqueue \
 sceKernelDeleteEqueue \
+sceKernelWaitEqueue \
 sceKernelDlsym \
+sceKernelGetDirectMemorySize \
 sceKernelGetCurrentCpu \
 sceKernelGetModuleInfo \
 sceKernelGetModuleList \
