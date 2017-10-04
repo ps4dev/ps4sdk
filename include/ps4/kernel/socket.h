@@ -1,6 +1,7 @@
 #pragma once
 
 #include <netinet/in.h>
+#include <sys/socket.h>
 #include <sys/socketvar.h>
 
 typedef struct socket Ps4KernelSocket;
@@ -23,3 +24,10 @@ int ps4KernelSocketPrintWithArgumentList(struct thread *td, Ps4KernelSocket *soc
 int ps4KernelSocketPrint(struct thread *td, Ps4KernelSocket *sock, const char *format, ...);
 int ps4KernelSocketPrintHexDump(struct thread *td, Ps4KernelSocket *sock, const void *data, size_t size);
 int ps4KernelSocketSend(struct thread *td, Ps4KernelSocket *sock, const void *data, size_t size);
+
+int ps4KernelSocketReceiveString(struct thread *td, Ps4KernelSocket *sock, void **data, size_t *size, size_t sizeMax);
+
+int ps4KernelSocketScanSizedWithArgumentList(struct thread *td, Ps4KernelSocket *sock, size_t size, int *match, const char *format, va_list args);
+int ps4KernelSocketScanWithArgumentList(struct thread *td, Ps4KernelSocket *sock, int *match, const char *format, va_list args);
+int ps4KernelSocketScan(struct thread *td, Ps4KernelSocket *sock, int *match, const char *format, ...);
+int ps4KernelSocketReceive(Ps4KernelThread *td, Ps4KernelSocket *sock, const void *data, size_t *size, size_t sizeMax, int flags);
