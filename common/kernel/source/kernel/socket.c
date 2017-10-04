@@ -24,6 +24,7 @@
 #include <sys/protosw.h>
 
 #include <ps4/kernel.h>
+#include <ps4/error.h>
 
 int ps4KernelSocketCreate(struct thread *td, Ps4KernelSocket **sock, int domain, int type, int protocol)
 {
@@ -366,4 +367,153 @@ int ps4KernelSocketSend(struct thread *td, Ps4KernelSocket *sock, const void *da
 	auio.uio_resid = iov.iov_len;
 
 	return sosend(sock, NULL, &auio, 0, NULL, 0, td);
+}
+
+int ps4StringEstimateFormatArguments(const char *format, size_t *count)
+{
+	size_t c = 0;
+
+	if(format == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+
+	if(count == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+
+	for(size_t i = 0; format[i] != '\0'; ++i)
+	{
+		if(format[i] == '%')
+		{
+			++c;
+
+			if(format[i + 1] == '\0')
+				return PS4_ERROR_ARGUMENT_MALFORMED;
+
+			if(format[i + 1] == '%')
+				i++;
+		}
+	}
+
+	*count = c;
+
+	return PS4_OK;
+}
+
+// FIXME: Slow, improve me
+int ps4KernelSocketReceiveString(struct thread *td, Ps4KernelSocket *sock, void **data, size_t *size, size_t sizeMax)
+{
+	uint8_t *_data;
+	size_t _size;
+	size_t offset;
+	size_t outSize;
+	int r;
+
+	if(sizeMax == 0)
+		sizeMax = SIZE_MAX;
+
+	_size = 1024;
+	if(_size > sizeMax - 1)
+		_size = sizeMax - 1;
+
+	offset = 0;
+
+	ps4KernelMemoryAllocateData((void **)&_data, _size + 1);
+
+	while(1)
+	{
+		r = ps4KernelSocketReceive(td, sock, _data + offset, &outSize, 1, MSG_WAITALL);
+
+		if(r != PS4_OK)
+		{
+			ps4KernelMemoryFree(data);
+			return PS4_ERROR_BAD_REQUEST;
+		}
+
+		if(_data[offset] == '\n')
+			break;
+
+		if(offset == _size)
+		{
+			_size *= 2;
+			ps4KernelMemoryReallocateData((void **)&_data, _size + 1);
+		}
+
+		++offset;
+	}
+
+	_data[offset + 1] = '\0';
+	*data = (void *)_data;
+	*size = offset + 2;
+
+	return PS4_OK;
+}
+
+int ps4KernelSocketScanSizedWithArgumentList(struct thread *td, Ps4KernelSocket *sock, size_t size, int *match, const char *format, va_list args)
+{
+	void *data;
+	int r;
+	size_t outSize;
+
+	if(match == NULL || format == NULL)
+		return PS4_ERROR_ARGUMENT_MISSING;
+
+	r = ps4KernelSocketReceiveString(td, sock, &data, &outSize, size);
+
+	if(r == PS4_OK)
+	{
+		*match = vsscanf(data, format, args);
+		ps4KernelMemoryFree(data);
+	}
+
+	return r;
+}
+
+int ps4KernelSocketScanWithArgumentList(struct thread *td, Ps4KernelSocket *sock, int *match, const char *format, va_list args)
+{
+	return ps4KernelSocketScanSizedWithArgumentList(td, sock, 0, match, format, args);
+}
+
+int ps4KernelSocketScan(struct thread *td, Ps4KernelSocket *sock, int *match, const char *format, ...)
+{
+	va_list args;
+	int r;
+
+	va_start(args, format);
+	r = ps4KernelSocketScanWithArgumentList(td, sock, match, format, args);
+	va_end(args);
+
+	return r;
+}
+
+int ps4KernelSocketReceive(Ps4KernelThread *td, Ps4KernelSocket *sock, const void *data, size_t *size, size_t sizeMax, int flags)
+{
+	struct uio auio;
+	struct iovec iov;
+
+	if(td == NULL)
+		return PS4_ERROR_ARGUMENT_THREAD_MISSING;
+	if(sock == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+	if(data == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	if(data == NULL)
+		return PS4_ERROR_ARGUMENT_OUT_MISSING;
+	if(sizeMax == 0)
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
+
+	iov.iov_base = (void *)data;
+	iov.iov_len = sizeMax;
+
+	auio.uio_iov = &iov;
+	auio.uio_iovcnt = 1;
+	auio.uio_segflg = UIO_SYSSPACE;
+	auio.uio_rw = UIO_READ;
+	auio.uio_td = td;
+	auio.uio_offset = 0;
+	auio.uio_resid = iov.iov_len;
+
+	int r = soreceive(sock, NULL, &auio, NULL, NULL, &flags);
+
+	*size = sizeMax - iov.iov_len;
+
+	return r;
 }
