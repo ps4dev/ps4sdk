@@ -58,6 +58,22 @@ int ps4KernelMemoryAllocateData(void **memory, size_t size)
 	return PS4_OK;
 }
 
+int ps4KernelMemoryReallocateData(void **memory, size_t size)
+{
+	if(memory == NULL)
+		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
+
+	if(size == 0)
+		return PS4_ERROR_ARGUMENT_SIZE_NULL;
+
+	if(ps4KernelMemoryType == NULL)
+		ps4KernelMemoryInitialize();
+
+	*memory = realloc(*memory, size, ps4KernelMemoryType, M_ZERO | M_WAITOK);
+
+	return PS4_OK;
+}
+
 int ps4KernelMemoryAllocateString(char **string, size_t *size, size_t sizeMax, const char *format, ...)
 {
 	va_list args;
