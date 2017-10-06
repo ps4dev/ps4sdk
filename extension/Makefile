@@ -1,21 +1,17 @@
-ifndef Ps4Sdk
-ifdef ps4sdk
-Ps4Sdk := $(ps4sdk)
-endif
-ifdef PS4SDK
-Ps4Sdk := $(PS4SDK)
-endif
-ifndef Ps4Sdk
-$(error Neither PS4SDK, Ps4Sdk nor ps4sdk set)
-endif
-endif
+###################################
+
+Ps4Sdk ?= $(CURDIR)/..
 
 target ?= ps4_lib_no_all
 BuildPath := $(Ps4Sdk)/build
 OutPath := $(Ps4Sdk)/lib
 IncludePath := -I$(wildcard */*/include) #FIXME: Need to gen correctly
 
+###################################
+
 include $(Ps4Sdk)/make/ps4sdk.mk
+
+###################################
 
 define generateCObject
 $(patsubst %,$(BuildPath)/%,$(patsubst %.c,%.o,$(1))): $(1)
