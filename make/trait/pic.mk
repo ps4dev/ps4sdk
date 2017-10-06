@@ -1,5 +1,5 @@
 ###################################
 
-CompilerFlags += $(Ps4SdkFlags) -fPIC
+CompilerFlags += -fPIC
 
 ###################################
