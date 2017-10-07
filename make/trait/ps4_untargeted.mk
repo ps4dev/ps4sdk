@@ -16,6 +16,7 @@ endif
 
 AssemblerFlags += -I$(Ps4Sdk)/include
 CompilerFlags += -D__PS4__ -I$(Ps4Sdk)/include -I $(Ps4Sdk)/include/sce
+CompilerFlagsCpp += -D__PS4__ -I$(Ps4Sdk)/include -I $(Ps4Sdk)/include/sce -I$(Ps4Sdk)/include/c++
 LinkerFlags += -L$(Ps4Sdk)/lib
 
 ###################################

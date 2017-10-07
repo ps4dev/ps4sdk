@@ -2,6 +2,7 @@
 
 Assembler ?= clang
 Compiler ?= clang
+CompilerCpp ?= clang++
 Linker ?= clang
 Archiver ?= ar
 ObjectCopy ?= objcopy
@@ -72,6 +73,16 @@ endif
 endif
 Cf ?=
 
+ifndef Cppf
+ifdef cppf
+Cppf := $(cppf)
+endif
+ifdef CPPF
+Cppf := $(CPPF)
+endif
+endif
+Cppf ?=
+
 ifndef Sf
 ifdef sf
 Sf := $(sf)
@@ -97,6 +108,7 @@ Lf ?=
 AssemblerFlags = -m64
 CompilerNoWarningFlags = -Wno-zero-length-array -Wno-format-pedantic
 CompilerFlags = -std=c11 -O3 -Wall -pedantic -m64 -mcmodel=large $(CompilerNoWarningFlags) $(IncludePath) $(Debug)
+CompilerFlagsCpp = -std=c++11 -O3 -Wall -pedantic -m64 -mcmodel=large $(CompilerNoWarningFlags) $(IncludePath) $(Debug)
 LinkerFlags = -O3 -Wall -m64 $(LibraryPath) $(Debug)
 ArchiverFlags = rcs
 
@@ -116,6 +128,13 @@ SourceFilesC += $(call findwildcard, $(SourcePath), *.c)
 endif
 SourceFilesC := $(filter-out $(SourceFilterC),$(SourceFilesC))
 
+ifdef SourceFilesCppForce
+SourceFilesCpp := $(SourceFilesCppForce)
+else
+SourceFilesCpp += $(call findwildcard, $(SourcePath), *.cpp)
+endif
+SourceFilesCpp := $(filter-out $(SourceFilterCpp),$(SourceFilesCpp))
+
 ifdef SourceFilesSForce
 SourceFilesS := $(SourceFilesSForce)
 else
@@ -123,8 +142,10 @@ SourceFilesS += $(call findwildcard, $(SourcePath), *.s)
 endif
 SourceFilesS := $(filter-out $(SourceFilterS),$(SourceFilesS))
 
-ObjectFiles	+=	$(patsubst $(SourcePath)/%.c, $(BuildPath)/%.c.o, $(SourceFilesC)) \
-				$(patsubst $(SourcePath)/%.s, $(BuildPath)/%.s.o, $(SourceFilesS))
+ObjectFiles	+= \
+	$(patsubst $(SourcePath)/%.cpp, $(BuildPath)/%.cpp.o, $(SourceFilesCpp)) \
+	$(patsubst $(SourcePath)/%.c, $(BuildPath)/%.c.o, $(SourceFilesC)) \
+	$(patsubst $(SourcePath)/%.s, $(BuildPath)/%.s.o, $(SourceFilesS))
 
 TargetFile ?= $(basename $(notdir $(CURDIR)))
 AllTarget ?= $(OutPath)/$(TargetFile)
@@ -134,8 +155,8 @@ CleanTarget ?= rm -fR $(BuildPath) $(OutPath)
 
 assemble = $(Assembler) $(Sf) -c $< $(AssemblerFlags) -o $@
 compile = $(Compiler) $(Cf) -c $< $(CompilerFlags) -o $@
+compileCpp = $(CompilerCpp) $(Cppf) -c $< $(CompilerFlagsCpp) -o $@
 link = $(Linker) $(Lf) $(CrtFile) $(call uniq,$? $(ObjectFiles)) $(LinkerFlags) $(Libraries) -o $@
-compileAndLink = $(Cf) $(Lf) $(Compiler) $? $(CompilerFlags) $(LinkerFlags) $(Libraries) -o $@
 archive = $(Archiver) $(ArchiverFlags) $@ $(call uniq,$? $(ObjectFiles))
 
 ###################################
@@ -157,8 +178,13 @@ $(BuildPath)/%.c.o: $(SourcePath)/%.c
 	$(dirp)
 	$(compile)
 
+$(BuildPath)/%.cpp.o: $(SourcePath)/%.cpp
+	$(dirp)
+	$(compileCpp)
+
 ###################################
 
+print-%  : ; @echo $* = $($*)
 all::
 clean::
 
