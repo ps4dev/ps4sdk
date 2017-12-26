@@ -18,6 +18,9 @@ __signbit \
 __signbitf \
 __signbitl \
 __srget \
+__stderrp \
+__stdinp \
+__stdoutp \
 __swbuf \
 _Exit \
 abort \
