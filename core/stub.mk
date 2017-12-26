@@ -21,6 +21,14 @@ $(eval $(call generateModule, libSceNet, sceNetAccept sceNetBind sceNetConnect s
 $(eval $(call generateModule, libScePad, scePadClose scePadInit scePadOpen scePadRead scePadReadState))
 $(eval $(call generateModule, libSceSysmodule, sceSysmoduleIsLoaded sceSysmoduleLoadModule sceSysmoduleUnloadModule))
 $(eval $(call generateModule, libSceUsbd, sceUsbdBulkTransfer sceUsbdCheckConnected sceUsbdClearHalt sceUsbdClose sceUsbdControlTransfer sceUsbdExit sceUsbdFreeConfigDescriptor sceUsbdFreeDeviceList sceUsbdGetActiveConfigDescriptor sceUsbdGetConfigDescriptor sceUsbdGetConfigDescriptorByValue sceUsbdGetDeviceDescriptor sceUsbdGetDeviceList sceUsbdInit sceUsbdInterruptTransfer sceUsbdOpen sceUsbdOpenDeviceWithVidPid sceUsbdResetDevice sceUsbdSetInterfaceAltSetting))
+$(eval $(call generateModule, libSceUserService, sceUserServiceInitialize sceUserServiceTerminate sceUserServiceGetLoginUserIdList sceUserServiceGetEvent sceUserServiceGetInitialUser sceUserServiceGetUserName sceUserServiceGetUserColor))
+$(eval $(call generateModule, libSceVideoOut, sceVideoOutOpen sceVideoOutClose sceVideoOutRegisterBuffers sceVideoOutUnregisterBuffers sceVideoOutSubmitFlip sceVideoOutSetBufferAttribute sceVideoOutSetFlipRate sceVideoOutAddFlipEvent sceVideoOutGetFlipStatus))
+$(eval $(call generateModule, libSceGnmDriver, sceGnmFlushGarlic))
+$(eval $(call generateModule, libSceSystemService, sceSystemServiceHideSplashScreen))
+$(eval $(call generateModule, libSceAudioOut, sceAudioOutInit sceAudioOutOpen sceAudioOutClose sceAudioOutOutput sceAudioOutSetVolume))
+$(eval $(call generateModule, libSceIme, sceImeKeyboardOpen sceImeKeyboardClose sceImeKeyboardUpdate sceImeKeyboardGetInfo sceImeKeyboardSetMode sceImeKeyboardGetResourceId sceImeUpdate sceImeOpen sceImeClose sceImeParamInit sceImeSetText))
+
+
 
 # no need to touch, generates non-module libs
 $(eval $(call generateLibraryLarge, kern_function, libps4Kernel, none, $(kerns)))

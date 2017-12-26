@@ -2,10 +2,13 @@
 
 #include <stdint.h>
 #include <sys/time.h>
+#include <sys/event.h>
 
 #ifndef MAP_TYPE
 	#define MAP_TYPE 0x0f
 #endif
+
+
 
 typedef struct SceKernelModuleSegmentInfo
 {
@@ -34,3 +37,4 @@ typedef void *ScePthreadMutexattr;
 typedef uint32_t SceKernelModule;
 
 typedef uint64_t SceKernelEqueue;
+typedef struct kevent SceKernelEvent;
